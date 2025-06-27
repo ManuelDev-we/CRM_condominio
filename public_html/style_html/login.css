@@ -1,0 +1,100 @@
+/* style_html/login.css */
+:root {
+  --text-color: #ffffff;
+  --bg-start: #0f0c29;
+  --bg-end: #302b63;
+  --accent1: #08f7fe;
+  --accent2: #fe53bb;
+  --btn-gradient: linear-gradient(45deg, var(--accent1), var(--accent2));
+  --btn-hover-gradient: linear-gradient(45deg, var(--accent2), var(--accent1));
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+  display: grid;
+  place-items: center;
+}
+
+.form-card {
+  background: rgba(20, 20, 30, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  max-width: 360px;
+  width: 90%;
+  padding: 2rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-card header, .form-card footer {
+  text-align: center;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.form-group input {
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.form-group input:focus {
+  border-color: var(--accent2);
+  box-shadow: 0 0 6px var(--accent2);
+  background: rgba(255, 255, 255, 0.15);
+  outline: none;
+}
+
+.form-card .btn {
+  background: var(--btn-gradient);
+  padding: 0.75rem;
+  border: none;
+  border-radius: 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.form-card .btn:hover {
+  background: var(--btn-hover-gradient);
+  transform: translateY(-2px);
+}
+
+.form-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-footer a.btn {
+  background: transparent;
+  box-shadow: none;
+  color: var(--accent1);
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  transition: color 0.3s;
+}
+
+.form-footer a.btn:hover {
+  color: var(--accent2);
+}

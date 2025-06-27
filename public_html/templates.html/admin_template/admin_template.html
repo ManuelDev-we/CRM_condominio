@@ -1,0 +1,143 @@
+<!-- templates.html/admin_template/admin_template.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración - Cyberhole Condominios CRM</title>
+  <link rel="stylesheet" href="../../style_html/index.css">
+  <link rel="stylesheet" href="../../style_html/admin_template.css">
+  <style>
+    /* Fondo azul marino */
+    body {
+      background: #0a1f44;
+      margin: 0;
+      padding: 0;
+    }
+    /* Canvas de copos atrás */
+    #snow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* Elevar contenido sobre el canvas */
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Canvas para copos de nieve -->
+  <canvas id="snow"></canvas>
+  <div class="content-wrapper">
+  <!-- Canvas para copos de nieve -->
+  <canvas id="snow"></canvas>
+
+  <!-- Header compartido -->
+  <?php include '../shared_header_admin.html'; ?>
+
+  <main class="admin-main container">
+    <!-- Sección: Crear Condominio -->
+    <section class="admin-section">
+      <h2>Crear Condominio</h2>
+      <form action="../../php/admin/create_condominio.php" method="POST" class="form-container">
+        <div class="form-group">
+          <label for="cond_nombre">Nombre</label>
+          <input type="text" id="cond_nombre" name="nombre" required>
+        </div>
+        <div class="form-group">
+          <label for="cond_direccion">Dirección</label>
+          <input type="text" id="cond_direccion" name="direccion" required>
+        </div>
+        <button type="submit" class="btn">Crear Condominio</button>
+      </form>
+    </section>
+    <!-- Sección: Agregar Calle -->
+    <section class="admin-section">
+      <h2>Agregar Calle</h2>
+      <form action="../../php/admin/create_calle.php" method="POST" class="form-container">
+        <div class="form-group">
+          <label for="calle_condominio">Condominio</label>
+          <select id="calle_condominio" name="id_condominio" required></select>
+        </div>
+        <div class="form-group">
+          <label for="calle_nombre">Nombre de Calle</label>
+          <input type="text" id="calle_nombre" name="nombre" required>
+        </div>
+        <div class="form-group">
+          <label for="calle_desc">Descripción (opcional)</label>
+          <textarea id="calle_desc" name="descripcion"></textarea>
+        </div>
+        <button type="submit" class="btn">Agregar Calle</button>
+      </form>
+    </section>
+    <!-- Sección: Agregar Casa -->
+    <section class="admin-section">
+      <h2>Agregar Casa</h2>
+      <form action="../../php/admin/create_casa.php" method="POST" class="form-container">
+        <div class="form-group">
+          <label for="casa_condominio">Condominio</label>
+          <select id="casa_condominio" name="id_condominio" required></select>
+        </div>
+        <div class="form-group">
+          <label for="casa_calle">Calle</label>
+          <select id="casa_calle" name="id_calle" required></select>
+        </div>
+        <div class="form-group">
+          <label for="casa_numero">Número de Casa</label>
+          <input type="text" id="casa_numero" name="casa" required>
+        </div>
+        <button type="submit" class="btn">Agregar Casa</button>
+      </form>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Cyberhole Condominios CRM</p>
+  </footer>
+
+  <script>
+    // Script simple de copos de nieve
+    const canvas = document.getElementById('snow');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const flakes = [];
+    const count = 200;
+    for (let i = 0; i < count; i++) {
+      flakes.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 4 + 1, d: Math.random() * count });
+    }
+    function drawSnow() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.beginPath();
+      flakes.forEach(f => {
+        ctx.moveTo(f.x, f.y);
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+      });
+      ctx.fill();
+      updateSnow();
+    }
+    let angle = 0;
+    function updateSnow() {
+      angle += 0.01;
+      flakes.forEach((f, i) => {
+        f.y += Math.cos(angle + f.d) + 1 + f.r / 2;
+        f.x += Math.sin(angle) * 2;
+        if (f.x > canvas.width + 5 || f.x < -5 || f.y > canvas.height) {
+          if (i % 3 > 0) {
+            flakes[i] = { x: Math.random() * canvas.width, y: -10, r: f.r, d: f.d };
+          } else {
+            flakes[i] = { x: -5, y: Math.random() * canvas.height, r: f.r, d: f.d };
+          }
+        }
+      });
+    }
+    setInterval(drawSnow, 33);
+  </script>
+</body>
+</html>

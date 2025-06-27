@@ -1,0 +1,62 @@
+# Archivos de configuración sensibles
+.env
+config/database.php
+
+# Logs y archivos de debug
+logs/
+*.log
+debug.log
+error_log
+php_errors.log
+
+# Archivos temporales y cache
+tmp/
+temp/
+cache/
+*.cache
+sessions/
+
+# Uploads y archivos generados
+uploads/tmp/
+uploads/temp/
+*.uploaded
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de editor e IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Dependencias
+vendor/
+node_modules/
+
+# Archivos de respaldo y versiones
+*.bak
+*.backup
+*.orig
+*.tmp
+
+# Archivos específicos de desarrollo
+test.php
+debug.php
+sandbox.php
+
+# Archivos de base de datos locales
+*.sqlite
+*.db
+
+# Archivos de compresión
+*.zip
+*.rar
+*.tar.gz
+
+# Archivos específicos del servidor
+.htpasswd
+robots.txt

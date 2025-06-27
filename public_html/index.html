@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberhole Condominios - Inicio</title>
+    <!-- Enlazando al archivo de estilos -->
+    <link rel="stylesheet" href="style_html/index.css">
+</head>
+<body>
+    <header>
+        <h1>Bienvenido a Cyberhole Condominios CRM</h1>
+        <p class="descripcion">Nuestro CRM integral está diseñado para gestionar de forma eficiente y centralizada todas las operaciones de tu condominio. Ofrecemos las siguientes funcionalidades:</p>
+    </header>
+    <main>
+        <section class="funcionalidades">
+            <ul>
+                <li><span>Registro y autenticación de residentes y administradores</span></li>
+                <li><span>Gestión de calles y direcciones</span></li>
+                <li><span>Administración de condominios y unidades habitacionales</span></li>
+                <li><span>Control de acceso y registros de entradas/salidas</span></li>
+                <li><span>Gestión de casas y asignación de propietarios</span></li>
+                <li><span>Administración de engomados y permisos de estacionamiento</span></li>
+                <li><span>Registro y gestión de empleados</span></li>
+                <li><span>Etiquetado y organización de datos (tags)</span></li>
+                <li><span>Gestión de tareas y recordatorios internos</span></li>
+                <li><span>Importación de datos desde CSV y JSON</span></li>
+                <li><span>Reportes y exportación de información</span></li>
+            </ul>
+        </section>
+        <section class="acciones">
+            <div class="dropdown">
+                <button class="btn dropdown-toggle">Residente</button>
+                <div class="dropdown-menu">
+                    <a href="templates.html/register_resi/register.html" class="dropdown-item">Registrarme</a>
+                    <a href="templates.html/register_resi/login.html" class="dropdown-item">Iniciar sesión</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="btn dropdown-toggle">Administrador</button>
+                <div class="dropdown-menu">
+                    <a href="templates.html/register_admin/register.html" class="dropdown-item">Registrarme</a>
+                    <a href="templates.html/register_admin/login.html" class="dropdown-item">Iniciar sesión</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Cyberhole Condominios CRM</p>
+    </footer>
+    <!-- Script para dropdown -->
+    <script>
+        document.querySelectorAll('.dropdown').forEach(drop => {
+            const btn = drop.querySelector('.dropdown-toggle');
+            const menu = drop.querySelector('.dropdown-menu');
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('show');
+            });
+            window.addEventListener('click', e => {
+                if (!drop.contains(e.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+/* Variables de color */
+:root {
+    --bg-gradient-start: #2b003f;
+    --bg-gradient-end: #000000;
+    --accent-gradient: linear-gradient(45deg, #d500f9, #00e5ff);
+    --btn-gradient: linear-gradient(45deg, #651fff, #6200ea);
+    --btn-hover-gradient: linear-gradient(45deg, #7c4dff, #2979ff);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --dropdown-bg: rgba(0, 0, 0, 0.6);
+    --dropdown-item-hover: rgba(255, 255, 255, 0.1);
+    --text-color: #ffffff;
+}
+
+/* Reset básico y tipografía */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+header {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: var(--dropdown-bg);
+    backdrop-filter: blur(12px);
+}
+
+header h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    background: var(--accent-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+header .descripcion {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+main {
+    flex: 1;
+    padding: 2rem 1rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.funcionalidades ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    list-style: none;
+    margin-bottom: 3rem;
+}
+
+.funcionalidades li {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+    position: relative;
+    overflow: hidden;
+}
+
+.funcionalidades li span {
+    position: relative;
+    z-index: 1;
+}
+
+.funcionalidades li::before {
+    content: "";
+    position: absolute;
+    top: -30%;
+    left: -30%;
+    width: 160%;
+    height: 160%;
+    background: var(--accent-gradient);
+    opacity: 0.15;
+    transform: rotate(45deg);
+}
+
+.acciones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Botones y Dropdown */
+.btn, .dropdown-toggle {
+    padding: 0.8rem 2.5rem;
+    background: var(--btn-gradient);
+    border: none;
+    border-radius: 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover, .dropdown-toggle:hover {
+    background: var(--btn-hover-gradient);
+    transform: translateY(-4px);
+}
+
+.btn::after, .dropdown-toggle::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+}
+
+.btn:active::after, .dropdown-toggle:active::after {
+    width: 200%;
+    height: 200%;
+    transition: 0s;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--dropdown-bg);
+    backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    min-width: 220px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    z-index: 10;
+}
+
+.dropdown-menu.show {
+    display: flex;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: background 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background: var(--dropdown-item-hover);
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background: var(--dropdown-bg);
+    backdrop-filter: blur(12px);
+}
+
+footer p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}

@@ -1,0 +1,115 @@
+<!-- templates.html/resi_template/entrance.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generar QR de Entrada / Salida - Cyberhole Condominios CRM</title>
+  <link rel="stylesheet" href="../../style_html/entrance.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <?php include '../shared_header_resi.html'; ?>
+
+  <main class="entrance-main container">
+    <!-- Generar QR -->
+    <section class="entrance-section">
+      <details open>
+        <summary class="summary-title">Generar Código QR de Acceso</summary>
+        <p class="desc">Solo ingresa el nombre del visitante. El sistema registrará la fecha y hora automáticamente.</p>
+        <form action="../../php/resi/create_entrance.php" method="POST" class="form-container" id="qrForm">
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="visitante">Nombre del Visitante</label>
+            <input type="text" id="visitante" name="nombre_accesante" required>
+          </div>
+          <!-- IDs del residente -->
+          <input type="hidden" name="id_condominio" value="<?= $condominioId ?>">
+          <input type="hidden" name="id_calle"      value="<?= $calleId ?>">
+          <input type="hidden" name="id_casa"       value="<?= $casaId ?>">
+          <button type="submit" class="assign-btn" style="grid-column: span 2;">Generar QR</button>
+        </form>
+        <!-- Área de visualización del QR -->
+        <div id="qrResult" class="qr-wrapper" style="display:none;">
+          <h3>QR generado</h3>
+          <div id="qrcode" class="qr-box"></div>
+          <p class="hint">Toma una captura de pantalla del código o usa el botón de abajo para imprimirlo / descargarlo.</p>
+          <button id="printQR" class="btn">Imprimir / Descargar</button>
+        </div>
+      </details>
+    </section>
+
+    <!-- Historial -->
+    <section class="entrance-section">
+      <h2>Historial de Entradas / Salidas</h2>
+      <form method="GET" class="filter-container">
+        <div class="form-group">
+          <label for="f_visitante">Visitante</label>
+          <input type="text" id="f_visitante" name="visitante">
+        </div>
+        <div class="form-group">
+          <label for="f_fecha">Fecha</label>
+          <input type="date" id="f_fecha" name="fecha">
+        </div>
+        <button type="submit" class="btn">Filtrar</button>
+      </form>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>QR</th>
+              <th>Visitante</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($entradas as $e): ?>
+            <tr>
+              <td><img src="<?= $e['qr_url'] ?>" alt="QR" height="40"></td>
+              <td><?= htmlspecialchars($e['nombre_accesante']) ?></td>
+              <td><?= htmlspecialchars($e['hora_entrada']) ?></td>
+              <td><?= htmlspecialchars($e['hora_salida'] ?? '-') ?></td>
+              <td><?= $e['utilizado'] ? 'Usado' : 'Pendiente' ?></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cyberhole Condominios CRM</p>
+  </footer>
+
+  <script>
+    // Generar QR via fetch
+    const form = document.getElementById('qrForm');
+    const qrDiv = document.getElementById('qrcode');
+    const qrWrapper = document.getElementById('qrResult');
+    const printBtn = document.getElementById('printQR');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const res = await fetch(form.action, { method: 'POST', body: data });
+      const json = await res.json();
+      if (json.ok) {
+        qrDiv.innerHTML = '';
+        new QRCode(qrDiv, { text: json.qr_text, width: 220, height: 220 });
+        qrWrapper.style.display = 'flex';
+      } else {
+        alert('No se pudo generar el QR');
+      }
+    });
+
+    printBtn.addEventListener('click', () => {
+      const win = window.open('');
+      win.document.write(`<img src="${qrDiv.querySelector('canvas').toDataURL()}" style="width:220px;height:220px;">`);
+      win.print();
+      win.close();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Condominio - Cyberhole Condominios</title>
+    <link rel="stylesheet" href="style_html/condominio.css">
+</head>
+<body>
+    <div id="header-container"></div>
+    
+    <main class="condominio-main">
+        <div class="condominio-container">
+            <!-- Header del condominio -->
+            <section class="condominio-header">
+                <div class="condominio-info">
+                    <h1 id="condominioName">Nombre del Condominio</h1>
+                    <p id="condominioAddress">Dirección del condominio</p>
+                    <div class="condominio-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalUnits">0</span>
+                            <span class="stat-label">Unidades</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="activeResidents">0</span>
+                            <span class="stat-label">Residentes Activos</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="pendingTasks">0</span>
+                            <span class="stat-label">Tareas Pendientes</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="condominio-actions">
+                    <button class="btn-primary" onclick="editCondominioInfo()">Editar Información</button>
+                    <button class="btn-secondary" onclick="generateReport()">Generar Reporte</button>
+                </div>
+            </section>
+            
+            <!-- Navegación por pestañas -->
+            <nav class="tab-navigation">
+                <button class="tab-btn active" onclick="showTab('accesos')" data-tab="accesos">
+                    <span class="tab-icon">🚪</span> Control de Accesos
+                </button>
+                <button class="tab-btn" onclick="showTab('qr')" data-tab="qr">
+                    <span class="tab-icon">📱</span> Códigos QR
+                </button>
+                <button class="tab-btn" onclick="showTab('engomados')" data-tab="engomados">
+                    <span class="tab-icon">🏷️</span> Engomados
+                </button>
+                <button class="tab-btn" onclick="showTab('tags')" data-tab="tags">
+                    <span class="tab-icon">🏷️</span> Tags/Etiquetas
+                </button>
+                <button class="tab-btn" onclick="showTab('edicion')" data-tab="edicion">
+                    <span class="tab-icon">✏️</span> Herramientas de Edición
+                </button>
+            </nav>
+            
+            <!-- Contenido de las pestañas -->
+            
+            <!-- Pestaña de Control de Accesos -->
+            <section id="tab-accesos" class="tab-content active">
+                <h2>Control de Accesos</h2>
+                
+                <div class="access-controls">
+                    <div class="control-group">
+                        <button class="btn-primary" onclick="registerAccess()">Registrar Acceso</button>
+                        <button class="btn-secondary" onclick="viewAccessHistory()">Historial de Accesos</button>
+                        <button class="btn-secondary" onclick="managePermissions()">Gestionar Permisos</button>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <input type="date" id="accessDateFrom" placeholder="Desde">
+                        <input type="date" id="accessDateTo" placeholder="Hasta">
+                        <select id="accessType">
+                            <option value="">Todos los tipos</option>
+                            <option value="entrada">Entrada</option>
+                            <option value="salida">Salida</option>
+                        </select>
+                        <button onclick="filterAccesses()">Filtrar</button>
+                    </div>
+                </div>
+                
+                <div class="access-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha/Hora</th>
+                                <th>Tipo</th>
+                                <th>Residente</th>
+                                <th>Unidad</th>
+                                <th>Método</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accessTableBody">
+                            <!-- Datos cargados dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Pestaña de Códigos QR -->
+            <section id="tab-qr" class="tab-content">
+                <h2>Gestión de Códigos QR</h2>
+                
+                <div class="qr-controls">
+                    <div class="control-group">
+                        <button class="btn-primary" onclick="generateQR()">Generar Nuevo QR</button>
+                        <button class="btn-secondary" onclick="bulkGenerateQR()">Generación Masiva</button>
+                        <button class="btn-secondary" onclick="qrSettings()">Configuración QR</button>
+                    </div>
+                    
+                    <div class="qr-types">
+                        <label>
+                            <input type="radio" name="qrType" value="resident" checked> Residente
+                        </label>
+                        <label>
+                            <input type="radio" name="qrType" value="visitor"> Visitante
+                        </label>
+                        <label>
+                            <input type="radio" name="qrType" value="temporary"> Temporal
+                        </label>
+                        <label>
+                            <input type="radio" name="qrType" value="service"> Servicio
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="qr-grid" id="qrGrid">
+                    <!-- Códigos QR generados aparecerán aquí -->
+                </div>
+                
+                <div class="qr-generator">
+                    <h3>Generador de QR</h3>
+                    <div class="generator-form">
+                        <div class="form-group">
+                            <label for="qrName">Nombre/Descripción:</label>
+                            <input type="text" id="qrName" placeholder="Ej: Juan Pérez - Unidad 101">
+                        </div>
+                        <div class="form-group">
+                            <label for="qrExpiry">Fecha de Expiración:</label>
+                            <input type="datetime-local" id="qrExpiry">
+                        </div>
+                        <div class="form-group">
+                            <label for="qrPermissions">Permisos:</label>
+                            <select id="qrPermissions" multiple>
+                                <option value="entrance">Entrada Principal</option>
+                                <option value="parking">Estacionamiento</option>
+                                <option value="pool">Piscina</option>
+                                <option value="gym">Gimnasio</option>
+                                <option value="common_areas">Áreas Comunes</option>
+                            </select>
+                        </div>
+                        <button onclick="createQRCode()">Crear Código QR</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Pestaña de Engomados -->
+            <section id="tab-engomados" class="tab-content">
+                <h2>Gestión de Engomados</h2>
+                
+                <div class="engomados-controls">
+                    <div class="control-group">
+                        <button class="btn-primary" onclick="createEngomado()">Crear Engomado</button>
+                        <button class="btn-secondary" onclick="bulkEngomados()">Creación Masiva</button>
+                        <button class="btn-secondary" onclick="printEngomados()">Imprimir Seleccionados</button>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <select id="engomadoStatus">
+                            <option value="">Todos los estados</option>
+                            <option value="active">Activos</option>
+                            <option value="expired">Expirados</option>
+                            <option value="pending">Pendientes</option>
+                        </select>
+                        <select id="engomadoType">
+                            <option value="">Todos los tipos</option>
+                            <option value="resident">Residente</option>
+                            <option value="visitor">Visitante</option>
+                            <option value="service">Servicio</option>
+                        </select>
+                        <button onclick="filterEngomados()">Filtrar</button>
+                    </div>
+                </div>
+                
+                <div class="engomados-grid" id="engomadasGrid">
+                    <!-- Engomados aparecerán aquí -->
+                </div>
+                
+                <div class="engomado-designer">
+                    <h3>Diseñador de Engomados</h3>
+                    <div class="designer-tools">
+                        <div class="design-options">
+                            <label>Plantilla:</label>
+                            <select id="engomadoTemplate">
+                                <option value="basic">Básica</option>
+                                <option value="modern">Moderna</option>
+                                <option value="minimal">Minimalista</option>
+                            </select>
+                        </div>
+                        <div class="color-picker">
+                            <label>Color Principal:</label>
+                            <input type="color" id="engomadoColor" value="#007bff">
+                        </div>
+                        <div class="preview-area" id="engomadoPreview">
+                            <!-- Vista previa del engomado -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Pestaña de Tags/Etiquetas -->
+            <section id="tab-tags" class="tab-content">
+                <h2>Gestión de Tags y Etiquetas</h2>
+                
+                <div class="tags-controls">
+                    <div class="control-group">
+                        <button class="btn-primary" onclick="createTag()">Crear Tag</button>
+                        <button class="btn-secondary" onclick="manageCategories()">Gestionar Categorías</button>
+                        <button class="btn-secondary" onclick="bulkTagOperations()">Operaciones Masivas</button>
+                    </div>
+                    
+                    <div class="tag-categories">
+                        <button class="category-btn active" onclick="filterByCategory('all')">Todos</button>
+                        <button class="category-btn" onclick="filterByCategory('resident')">Residentes</button>
+                        <button class="category-btn" onclick="filterByCategory('vehicle')">Vehículos</button>
+                        <button class="category-btn" onclick="filterByCategory('access')">Acceso</button>
+                        <button class="category-btn" onclick="filterByCategory('service')">Servicios</button>
+                    </div>
+                </div>
+                
+                <div class="tags-container">
+                    <div class="tags-list" id="tagsList">
+                        <!-- Lista de tags -->
+                    </div>
+                    
+                    <div class="tag-creator">
+                        <h3>Crear Nueva Etiqueta</h3>
+                        <form id="tagForm">
+                            <div class="form-group">
+                                <label for="tagName">Nombre del Tag:</label>
+                                <input type="text" id="tagName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tagCategory">Categoría:</label>
+                                <select id="tagCategory" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="resident">Residente</option>
+                                    <option value="vehicle">Vehículo</option>
+                                    <option value="access">Acceso</option>
+                                    <option value="service">Servicio</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tagColor">Color:</label>
+                                <input type="color" id="tagColor" value="#007bff">
+                            </div>
+                            <div class="form-group">
+                                <label for="tagDescription">Descripción:</label>
+                                <textarea id="tagDescription"></textarea>
+                            </div>
+                            <button type="submit">Crear Tag</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Pestaña de Herramientas de Edición -->
+            <section id="tab-edicion" class="tab-content">
+                <h2>Herramientas de Edición</h2>
+                
+                <div class="editing-tools">
+                    <div class="tool-section">
+                        <h3>Gestión de Residentes</h3>
+                        <div class="tool-buttons">
+                            <button onclick="editResidents()">Editar Residentes</button>
+                            <button onclick="bulkUpdateResidents()">Actualización Masiva</button>
+                            <button onclick="importResidents()">Importar Datos</button>
+                            <button onclick="exportResidents()">Exportar Datos</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-section">
+                        <h3>Configuración del Condominio</h3>
+                        <div class="tool-buttons">
+                            <button onclick="editBuildings()">Editar Edificios</button>
+                            <button onclick="manageUnits()">Gestionar Unidades</button>
+                            <button onclick="configureAreas()">Configurar Áreas</button>
+                            <button onclick="setRestrictions()">Establecer Restricciones</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-section">
+                        <h3>Personalización</h3>
+                        <div class="tool-buttons">
+                            <button onclick="customizeInterface()">Personalizar Interfaz</button>
+                            <button onclick="configureNotifications()">Configurar Notificaciones</button>
+                            <button onclick="manageTemplates()">Gestionar Plantillas</button>
+                            <button onclick="brandingSettings()">Configuración de Marca</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-section">
+                        <h3>Importación/Exportación</h3>
+                        <div class="tool-buttons">
+                            <button onclick="importData()">Importar Datos</button>
+                            <button onclick="exportData()">Exportar Datos</button>
+                            <button onclick="backupData()">Respaldar Datos</button>
+                            <button onclick="restoreData()">Restaurar Datos</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bulk-operations">
+                    <h3>Operaciones Masivas</h3>
+                    <div class="bulk-form">
+                        <select id="bulkOperation">
+                            <option value="">Seleccionar operación</option>
+                            <option value="activate_all">Activar Todos</option>
+                            <option value="deactivate_all">Desactivar Todos</option>
+                            <option value="update_status">Actualizar Estado</option>
+                            <option value="assign_tags">Asignar Tags</option>
+                            <option value="send_notifications">Enviar Notificaciones</option>
+                        </select>
+                        <button onclick="executeBulkOperation()">Ejecutar</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <div id="footer-container"></div>
+    
+    <!-- Modal genérico -->
+    <div id="modalContainer" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalBody">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/auth-manager.js"></script>
+    <script src="../js/admin.js"></script>
+    <script src="../js/resi.js"></script>
+    <script>
+        let currentCondominioId = null;
+        let currentTab = 'accesos';
+        
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar header y footer
+            loadHeaderFooter();
+            
+            // Verificar autenticación
+            const authManager = new AuthenticationManager();
+            if (!authManager.isAuthenticated()) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            // Obtener ID del condominio de la URL o sesión
+            currentCondominioId = getCondominioId();
+            
+            // Cargar información del condominio
+            loadCondominioInfo();
+            
+            // Cargar datos de la pestaña activa
+            loadTabData(currentTab);
+        });
+        
+        // Obtener ID del condominio
+        function getCondominioId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id') || sessionStorage.getItem('currentCondominioId') || 1;
+        }
+        
+        // Cargar información del condominio
+        function loadCondominioInfo() {
+            // Implementar carga de información del condominio
+            // Por ahora, datos de ejemplo
+            document.getElementById('condominioName').textContent = 'Residencial Los Pinos';
+            document.getElementById('condominioAddress').textContent = 'Av. Principal 123, Ciudad';
+            document.getElementById('totalUnits').textContent = '48';
+            document.getElementById('activeResidents').textContent = '142';
+            document.getElementById('pendingTasks').textContent = '7';
+        }
+        
+        // Gestión de pestañas
+        function showTab(tabName) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Desactivar todos los botones
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar la pestaña seleccionada
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            currentTab = tabName;
+            loadTabData(tabName);
+        }
+        
+        // Cargar datos de la pestaña
+        function loadTabData(tabName) {
+            switch(tabName) {
+                case 'accesos':
+                    loadAccessData();
+                    break;
+                case 'qr':
+                    loadQRData();
+                    break;
+                case 'engomados':
+                    loadEngomadasData();
+                    break;
+                case 'tags':
+                    loadTagsData();
+                    break;
+                case 'edicion':
+                    loadEditingTools();
+                    break;
+            }
+        }
+        
+        // Funciones de Control de Accesos
+        function loadAccessData() {
+            // Implementar carga de datos de acceso
+        }
+        
+        function registerAccess() {
+            // Implementar registro de acceso
+        }
+        
+        function viewAccessHistory() {
+            // Implementar vista de historial
+        }
+        
+        function managePermissions() {
+            // Implementar gestión de permisos
+        }
+        
+        function filterAccesses() {
+            // Implementar filtrado de accesos
+        }
+        
+        // Funciones de QR
+        function loadQRData() {
+            // Implementar carga de códigos QR
+        }
+        
+        function generateQR() {
+            // Implementar generación de QR
+        }
+        
+        function bulkGenerateQR() {
+            // Implementar generación masiva
+        }
+        
+        function qrSettings() {
+            // Implementar configuración de QR
+        }
+        
+        function createQRCode() {
+            // Implementar creación de código QR
+        }
+        
+        // Funciones de Engomados
+        function loadEngomadasData() {
+            // Implementar carga de engomados
+        }
+        
+        function createEngomado() {
+            // Implementar creación de engomado
+        }
+        
+        function bulkEngomados() {
+            // Implementar creación masiva de engomados
+        }
+        
+        function printEngomados() {
+            // Implementar impresión de engomados
+        }
+        
+        function filterEngomados() {
+            // Implementar filtrado de engomados
+        }
+        
+        // Funciones de Tags
+        function loadTagsData() {
+            // Implementar carga de tags
+        }
+        
+        function createTag() {
+            // Implementar creación de tag
+        }
+        
+        function manageCategories() {
+            // Implementar gestión de categorías
+        }
+        
+        function bulkTagOperations() {
+            // Implementar operaciones masivas de tags
+        }
+        
+        function filterByCategory(category) {
+            // Implementar filtro por categoría
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // Funciones de Herramientas de Edición
+        function loadEditingTools() {
+            // Implementar carga de herramientas de edición
+        }
+        
+        function editResidents() {
+            // Implementar edición de residentes
+        }
+        
+        function bulkUpdateResidents() {
+            // Implementar actualización masiva de residentes
+        }
+        
+        function importResidents() {
+            // Implementar importación de residentes
+        }
+        
+        function exportResidents() {
+            // Implementar exportación de residentes
+        }
+        
+        function editBuildings() {
+            // Implementar edición de edificios
+        }
+        
+        function manageUnits() {
+            // Implementar gestión de unidades
+        }
+        
+        function configureAreas() {
+            // Implementar configuración de áreas
+        }
+        
+        function setRestrictions() {
+            // Implementar establecimiento de restricciones
+        }
+        
+        function customizeInterface() {
+            // Implementar personalización de interfaz
+        }
+        
+        function configureNotifications() {
+            // Implementar configuración de notificaciones
+        }
+        
+        function manageTemplates() {
+            // Implementar gestión de plantillas
+        }
+        
+        function brandingSettings() {
+            // Implementar configuración de marca
+        }
+        
+        function importData() {
+            // Implementar importación de datos
+        }
+        
+        function exportData() {
+            // Implementar exportación de datos
+        }
+        
+        function backupData() {
+            // Implementar respaldo de datos
+        }
+        
+        function restoreData() {
+            // Implementar restauración de datos
+        }
+        
+        function executeBulkOperation() {
+            // Implementar ejecución de operación masiva
+        }
+        
+        // Funciones generales
+        function editCondominioInfo() {
+            // Implementar edición de información del condominio
+        }
+        
+        function generateReport() {
+            // Implementar generación de reporte
+        }
+        
+        function closeModal() {
+            document.getElementById('modalContainer').style.display = 'none';
+        }
+        
+        // Función para cargar header y footer
+        function loadHeaderFooter() {
+            const authManager = new AuthenticationManager();
+            authManager.loadHeader('header-container');
+            authManager.loadFooter('footer-container');
+        }
+        
+        // Manejo de formulario de tags
+        document.getElementById('tagForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Implementar creación de tag
+        });
+    </script>
+</body>
+</html>

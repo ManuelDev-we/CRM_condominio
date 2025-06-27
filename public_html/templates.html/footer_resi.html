@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style_html/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <footer class="main-footer">
+        <div class="footer-container">
+            <!-- Quick Stats Section -->
+            <div class="footer-section stats-section">
+                <h3>Estadísticas del Sistema</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalCondominios">0</div>
+                        <div class="stat-label">Condominios</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalPersonas">0</div>
+                        <div class="stat-label">Personas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalAccesos">0</div>
+                        <div class="stat-label">Accesos Hoy</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalTareas">0</div>
+                        <div class="stat-label">Tareas Pendientes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links Section -->
+            <div class="footer-section links-section">
+                <h3>Enlaces Rápidos</h3>
+                <div class="quick-links">
+                    <div class="link-column">
+                        <a href="admin_template.html" class="footer-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Panel Admin</span>
+                        </a>
+                        <a href="task.html" class="footer-link">
+                            <i class="fas fa-tasks"></i>
+                            <span>Gestión de Tareas</span>
+                        </a>
+                        <a href="control.html" class="footer-link">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Control de Acceso</span>
+                        </a>
+                    </div>
+                    <div class="link-column">
+                        <a href="condominio.html" class="footer-link">
+                            <i class="fas fa-building"></i>
+                            <span>Condominios</span>
+                        </a>
+                        <a href="blog.html" class="footer-link">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Blog de Tareas</span>
+                        </a>
+                        <a href="profile.html" class="footer-link">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Mi Perfil</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Status Section -->
+            <div class="footer-section status-section">
+                <h3>Estado del Sistema</h3>
+                <div class="system-status">
+                    <div class="status-item">
+                        <div class="status-indicator online"></div>
+                        <span>Base de Datos</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator online"></div>
+                        <span>Servidor QR</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator online"></div>
+                        <span>Sistema de Archivos</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator warning"></div>
+                        <span>Notificaciones</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="footer-section activity-section">
+                <h3>Actividad Reciente</h3>
+                <div class="recent-activities" id="recentActivities">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-text">
+                            <span class="activity-description">Nuevo residente registrado</span>
+                            <span class="activity-time">Hace 5 min</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <div class="activity-text">
+                            <span class="activity-description">QR generado para acceso</span>
+                            <span class="activity-time">Hace 12 min</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="activity-text">
+                            <span class="activity-description">Tarea completada</span>
+                            <span class="activity-time">Hace 1 hora</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Footer -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <div class="copyright">
+                    <p>&copy; 2024 Cyberhole Condominios. Todos los derechos reservados.</p>
+                </div>
+                <div class="footer-info">
+                    <span>Versión 1.0.0</span>
+                    <span>|</span>
+                    <span>Última actualización: <span id="lastUpdate">--</span></span>
+                    <span>|</span>
+                    <span>Usuario: <span id="footerUserName">--</span></span>
+                </div>
+                <div class="footer-actions">
+                    <button class="footer-btn" id="exportDataBtn" title="Exportar datos">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="footer-btn" id="helpBtn" title="Ayuda">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                    <button class="footer-btn" id="settingsBtn" title="Configuración">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize footer functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFooter();
+        });
+
+        function initializeFooter() {
+            // Set user info
+            const userName = localStorage.getItem('userName') || 'Usuario';
+            document.getElementById('footerUserName').textContent = userName;
+
+            // Set last update time
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleString();
+
+            // Load statistics
+            loadSystemStats();
+
+            // Setup event listeners
+            setupFooterEventListeners();
+
+            // Start auto-refresh for stats
+            setInterval(loadSystemStats, 30000); // Refresh every 30 seconds
+        }
+
+        function setupFooterEventListeners() {
+            document.getElementById('exportDataBtn').addEventListener('click', handleExportData);
+            document.getElementById('helpBtn').addEventListener('click', handleHelp);
+            document.getElementById('settingsBtn').addEventListener('click', handleSettings);
+        }
+
+        function loadSystemStats() {
+            try {
+                if (typeof admin !== 'undefined') {
+                    // Load admin statistics
+                    const condominios = admin.getCondominios();
+                    const personas = admin.getPersonas();
+                    const tareas = admin.getTareas();
+                    const accesos = admin.getAccesosHoy();
+
+                    document.getElementById('totalCondominios').textContent = condominios.length;
+                    document.getElementById('totalPersonas').textContent = personas.length;
+                    document.getElementById('totalTareas').textContent = tareas.filter(t => t.estado === 'pendiente').length;
+                    document.getElementById('totalAccesos').textContent = accesos.length;
+
+                    // Load recent activities
+                    loadRecentActivities();
+                } else if (typeof residente !== 'undefined') {
+                    // Load resident statistics (limited)
+                    const userAccesos = residente.getMisAccesos();
+                    const userTags = residente.getMisTags();
+                    const userEngomados = residente.getMisEngomados();
+                    
+                    document.getElementById('totalCondominios').textContent = '1';
+                    document.getElementById('totalPersonas').textContent = '1';
+                    document.getElementById('totalTareas').textContent = '--';
+                    document.getElementById('totalAccesos').textContent = userAccesos.length;
+                }
+            } catch (error) {
+                console.error('Error loading system stats:', error);
+            }
+        }
+
+        function loadRecentActivities() {
+            // This would be loaded from the system's activity log
+            // For now, showing placeholder activities
+            const activities = [
+                {
+                    icon: 'fas fa-user-plus',
+                    description: 'Nuevo residente registrado',
+                    time: 'Hace 5 min'
+                },
+                {
+                    icon: 'fas fa-qrcode',
+                    description: 'QR generado para acceso',
+                    time: 'Hace 12 min'
+                },
+                {
+                    icon: 'fas fa-check-circle',
+                    description: 'Tarea completada',
+                    time: 'Hace 1 hora'
+                }
+            ];
+
+            const container = document.getElementById('recentActivities');
+            container.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="${activity.icon}"></i>
+                    </div>
+                    <div class="activity-text">
+                        <span class="activity-description">${activity.description}</span>
+                        <span class="activity-time">${activity.time}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleExportData() {
+            if (typeof admin !== 'undefined') {
+                admin.exportarDatos();
+            } else {
+                alert('Función disponible solo para administradores');
+            }
+        }
+
+        function handleHelp() {
+            window.open('help.html', '_blank');
+        }
+
+        function handleSettings() {
+            window.location.href = 'settings.html';
+        }
+    </script>
+</body>
+</html>
