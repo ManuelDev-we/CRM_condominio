@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión Residente - Cyberhole Condominios CRM</title>
   <link rel="stylesheet" href="../../style_html/login.css">
+  <script src="../../js/cyberhole-system.js"></script>
 </head>
 <body>
   <div class="form-card">
@@ -14,7 +15,8 @@
       <p class="descripcion">Accede a tu cuenta de residente para gestionar tus datos y solicitudes en el CRM.</p>
     </header>
     <main>
-      <form action="../../php/resi/login.php" method="POST" class="form-container">
+      <div id="notification" class="notification" style="display: none;"></div>
+      <form id="residentLoginForm" class="form-container">
         <div class="form-group">
           <label for="email">Correo Electrónico</label>
           <br>
@@ -33,5 +35,9 @@
       <a href="../../index.html" class="btn">Volver al inicio</a>
     </footer>
   </div>
+
+  <script>
+    // El sistema de autenticación se maneja automáticamente con cyberhole-system.js
+  </script>
 </body>
 </html>

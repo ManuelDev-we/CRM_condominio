@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sistema de Permisos - Condominios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Test Sistema de Permisos - Condominios</h1>
+        <div id="status" class="status">
+            <strong>Estado:</strong> Sistema de pruebas para verificar permisos de administradores
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Panel de Login -->
+        <div class="container">
+            <h2>🔐 Login de Administrador</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="login-email" placeholder="Email del administrador">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="login-password" placeholder="Contraseña">
+            </div>
+            <button onclick="loginAdmin()">Iniciar Sesión</button>
+            <button onclick="checkSession()">Verificar Sesión</button>
+            <button onclick="logout()">Cerrar Sesión</button>
+            <div id="login-result"></div>
+        </div>
+
+        <!-- Panel de Estado -->
+        <div class="container">
+            <h2>📊 Estado del Sistema</h2>
+            <button onclick="getAllCondominios()">Ver Todos los Condominios</button>
+            <button onclick="getMyCondominios()">Mis Condominios</button>
+            <div id="estado-result"></div>
+        </div>
+    </div>
+
+    <!-- Panel de Condominios -->
+    <div class="container">
+        <h2>🏘️ Gestión de Condominios</h2>
+        <div class="grid">
+            <div>
+                <div class="form-group">
+                    <label>Nombre del Condominio:</label>
+                    <input type="text" id="condominio-nombre" placeholder="Ej: Residencial Las Flores">
+                </div>
+                <div class="form-group">
+                    <label>Dirección:</label>
+                    <input type="text" id="condominio-direccion" placeholder="Ej: Av. Principal 123">
+                </div>
+                <button onclick="createCondominio()">Crear Condominio</button>
+            </div>
+            <div id="condominio-result"></div>
+        </div>
+    </div>
+
+    <!-- Panel de Calles -->
+    <div class="container">
+        <h2>🛣️ Gestión de Calles</h2>
+        <div class="grid">
+            <div>
+                <div class="form-group">
+                    <label>Condominio:</label>
+                    <select id="calle-condominio">
+                        <option value="">Seleccionar condominio...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nombres de Calles (separadas por comas):</label>
+                    <textarea id="calle-nombres" rows="3" placeholder="Calle Principal, Calle Secundaria, Avenida Central"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Descripción (opcional):</label>
+                    <input type="text" id="calle-descripcion" placeholder="Descripción de las calles">
+                </div>
+                <button onclick="createCalles()">Crear Calles</button>
+                <button onclick="getCalles()">Ver Calles</button>
+            </div>
+            <div id="calle-result"></div>
+        </div>
+    </div>
+
+    <!-- Panel de Casas -->
+    <div class="container">
+        <h2>🏡 Gestión de Casas</h2>
+        <div class="grid">
+            <div>
+                <div class="form-group">
+                    <label>Condominio:</label>
+                    <select id="casa-condominio">
+                        <option value="">Seleccionar condominio...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Calle:</label>
+                    <select id="casa-calle">
+                        <option value="">Primero selecciona un condominio...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Número inicial:</label>
+                    <input type="number" id="casa-numero-inicio" value="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Cantidad:</label>
+                    <input type="number" id="casa-cantidad" value="10" min="1" max="500">
+                </div>
+                <div class="form-group">
+                    <label>Prefijo (opcional):</label>
+                    <input type="text" id="casa-prefijo" placeholder="Casa ">
+                </div>
+                <button onclick="createCasas()">Crear Casas</button>
+                <button onclick="getCasas()">Ver Casas</button>
+            </div>
+            <div id="casa-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '../apis/auth.php';
+        
+        // Estado global
+        let currentSession = null;
+        
+        // Función utilitaria para hacer peticiones
+        async function apiRequest(action, data = null, method = 'GET') {
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                let url = `${API_BASE}?action=${action}`;
+                
+                if (method === 'POST' && data) {
+                    options.body = JSON.stringify(data);
+                } else if (method === 'GET' && data) {
+                    const params = new URLSearchParams(data);
+                    url += '&' + params.toString();
+                }
+                
+                const response = await fetch(url, options);
+                const result = await response.json();
+                
+                return { ok: response.ok, data: result, status: response.status };
+            } catch (error) {
+                return { ok: false, data: { success: false, error: error.message }, status: 500 };
+            }
+        }
+        
+        // Funciones de autenticación
+        async function loginAdmin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                showResult('login-result', 'error', 'Error', { error: 'Email y contraseña son requeridos' });
+                return;
+            }
+            
+            const result = await apiRequest('login_admin', { email, password }, 'POST');
+            
+            if (result.ok && result.data.success) {
+                currentSession = result.data.data;
+                showResult('login-result', 'success', 'Login exitoso', result.data);
+                updateStatus('Sesión iniciada correctamente');
+                loadCondominios();
+            } else {
+                showResult('login-result', 'error', `Error en login (${result.status})`, result.data);
+                updateStatus('Error en login');
+            }
+        }
+        
+        async function checkSession() {
+            const result = await apiRequest('check_session');
+            showResult('login-result', result.ok ? 'success' : 'error', 'Estado de sesión', result.data);
+            
+            if (result.ok && result.data.success) {
+                updateStatus('Sesión activa');
+                loadCondominios();
+            } else {
+                updateStatus('Sin sesión activa');
+            }
+        }
+        
+        async function logout() {
+            const result = await apiRequest('logout');
+            currentSession = null;
+            showResult('login-result', 'success', 'Sesión cerrada', result.data);
+            updateStatus('Sesión cerrada');
+            clearSelects();
+        }
+        
+        // Funciones de condominios
+        async function createCondominio() {
+            const nombre = document.getElementById('condominio-nombre').value;
+            const direccion = document.getElementById('condominio-direccion').value;
+            
+            if (!nombre || !direccion) {
+                showResult('condominio-result', 'error', 'Error', { error: 'Nombre y dirección son requeridos' });
+                return;
+            }
+            
+            const result = await apiRequest('create_condominio', { nombre, direccion }, 'POST');
+            
+            if (result.ok && result.data.success) {
+                showResult('condominio-result', 'success', 'Condominio creado', result.data);
+                loadCondominios();
+                // Limpiar formulario
+                document.getElementById('condominio-nombre').value = '';
+                document.getElementById('condominio-direccion').value = '';
+            } else {
+                showResult('condominio-result', 'error', `Error al crear condominio (${result.status})`, result.data);
+            }
+        }
+        
+        async function getMyCondominios() {
+            const result = await apiRequest('get_condominios');
+            showResult('estado-result', result.ok ? 'success' : 'error', 'Mis condominios', result.data);
+        }
+        
+        async function getAllCondominios() {
+            // Simular logout temporal para ver todos los condominios
+            const result = await apiRequest('get_condominios');
+            showResult('estado-result', result.ok ? 'success' : 'error', 'Condominios disponibles', result.data);
+        }
+        
+        // Funciones de calles
+        async function createCalles() {
+            const id_condominio = document.getElementById('calle-condominio').value;
+            const nombres = document.getElementById('calle-nombres').value;
+            const descripcion = document.getElementById('calle-descripcion').value;
+            
+            if (!id_condominio || !nombres) {
+                showResult('calle-result', 'error', 'Error', { error: 'Condominio y nombres son requeridos' });
+                return;
+            }
+            
+            const result = await apiRequest('create_calle', { 
+                id_condominio: parseInt(id_condominio), 
+                nombres, 
+                descripcion 
+            }, 'POST');
+            
+            showResult('calle-result', result.ok ? 'success' : 'error', `Resultado calles (${result.status})`, result.data);
+            
+            if (result.ok && result.data.success) {
+                // Limpiar formulario
+                document.getElementById('calle-nombres').value = '';
+                document.getElementById('calle-descripcion').value = '';
+            }
+        }
+        
+        async function getCalles() {
+            const id_condominio = document.getElementById('calle-condominio').value;
+            if (!id_condominio) {
+                showResult('calle-result', 'error', 'Error', { error: 'Selecciona un condominio' });
+                return;
+            }
+            
+            const result = await apiRequest('get_calles', { condominio_id: id_condominio });
+            showResult('calle-result', result.ok ? 'success' : 'error', 'Calles', result.data);
+            
+            if (result.ok && result.data.success) {
+                loadCallesSelect(result.data.data);
+            }
+        }
+        
+        // Funciones de casas
+        async function createCasas() {
+            const id_condominio = document.getElementById('casa-condominio').value;
+            const id_calle = document.getElementById('casa-calle').value;
+            const numero_inicio = document.getElementById('casa-numero-inicio').value;
+            const cantidad = document.getElementById('casa-cantidad').value;
+            const prefijo = document.getElementById('casa-prefijo').value;
+            
+            if (!id_condominio || !id_calle || !numero_inicio || !cantidad) {
+                showResult('casa-result', 'error', 'Error', { error: 'Todos los campos son requeridos' });
+                return;
+            }
+            
+            const result = await apiRequest('create_casa', {
+                id_condominio: parseInt(id_condominio),
+                id_calle: parseInt(id_calle),
+                numero_inicio: parseInt(numero_inicio),
+                cantidad: parseInt(cantidad),
+                prefijo
+            }, 'POST');
+            
+            showResult('casa-result', result.ok ? 'success' : 'error', `Resultado casas (${result.status})`, result.data);
+        }
+        
+        async function getCasas() {
+            const id_condominio = document.getElementById('casa-condominio').value;
+            if (!id_condominio) {
+                showResult('casa-result', 'error', 'Error', { error: 'Selecciona un condominio' });
+                return;
+            }
+            
+            const result = await apiRequest('get_casas', { condominio_id: id_condominio });
+            showResult('casa-result', result.ok ? 'success' : 'error', 'Casas', result.data);
+        }
+        
+        // Funciones utilitarias
+        function showResult(elementId, type, title, data) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `
+                <div class="${type}">
+                    <strong>${title}</strong>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+        
+        function updateStatus(message) {
+            const statusElement = document.getElementById('status');
+            const now = new Date().toLocaleTimeString();
+            statusElement.innerHTML = `
+                <strong>Estado:</strong> ${message} (${now})
+            `;
+        }
+        
+        async function loadCondominios() {
+            const result = await apiRequest('get_condominios');
+            if (result.ok && result.data.success) {
+                const condominios = result.data.data;
+                const options = condominios.map(c => 
+                    `<option value="${c.id_condominio}">${c.nombre}</option>`
+                ).join('');
+                
+                document.getElementById('calle-condominio').innerHTML = 
+                    '<option value="">Seleccionar condominio...</option>' + options;
+                document.getElementById('casa-condominio').innerHTML = 
+                    '<option value="">Seleccionar condominio...</option>' + options;
+            }
+        }
+        
+        function loadCallesSelect(calles) {
+            const options = calles.map(c => 
+                `<option value="${c.id_calle}">${c.nombre}</option>`
+            ).join('');
+            
+            document.getElementById('casa-calle').innerHTML = 
+                '<option value="">Seleccionar calle...</option>' + options;
+        }
+        
+        function clearSelects() {
+            document.getElementById('calle-condominio').innerHTML = 
+                '<option value="">Seleccionar condominio...</option>';
+            document.getElementById('casa-condominio').innerHTML = 
+                '<option value="">Seleccionar condominio...</option>';
+            document.getElementById('casa-calle').innerHTML = 
+                '<option value="">Primero selecciona un condominio...</option>';
+        }
+        
+        // Event listeners
+        document.getElementById('calle-condominio').addEventListener('change', getCalles);
+        document.getElementById('casa-condominio').addEventListener('change', async function() {
+            const id_condominio = this.value;
+            if (id_condominio) {
+                const result = await apiRequest('get_calles', { condominio_id: id_condominio });
+                if (result.ok && result.data.success) {
+                    loadCallesSelect(result.data.data);
+                }
+            } else {
+                document.getElementById('casa-calle').innerHTML = 
+                    '<option value="">Primero selecciona un condominio...</option>';
+            }
+        });
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatus('Sistema cargado - Necesita login');
+            checkSession();
+        });
+    </script>
+</body>
+</html>

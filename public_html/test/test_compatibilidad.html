@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Compatibilidad Sistema Existente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Compatibilidad Sistema Existente</h1>
+        <div class="info">
+            <strong>Objetivo:</strong> Verificar que el nuevo sistema de permisos es compatible con el sistema existente
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Panel de Login -->
+        <div class="container">
+            <h2>🔐 Test Login Administrador</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="admin-email" placeholder="Email del administrador">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="admin-password" placeholder="Contraseña">
+            </div>
+            <button onclick="testAdminLogin()">Login Admin</button>
+            <button onclick="checkSession()">Check Session</button>
+            <button onclick="logout()">Logout</button>
+            <div id="admin-result"></div>
+        </div>
+
+        <!-- Panel de Login Residente -->
+        <div class="container">
+            <h2>👥 Test Login Residente</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="resident-email" placeholder="Email del residente">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="resident-password" placeholder="Contraseña">
+            </div>
+            <button onclick="testResidentLogin()">Login Residente</button>
+            <div id="resident-result"></div>
+        </div>
+    </div>
+
+    <!-- Panel de Verificación de Compatibilidad -->
+    <div class="container">
+        <h2>✅ Test Compatibilidad sessionStorage</h2>
+        <button onclick="checkSessionStorage()">Verificar sessionStorage</button>
+        <button onclick="testCyberholeSystem()">Test CyberholeSystem</button>
+        <button onclick="clearStorage()">Limpiar Storage</button>
+        <div id="compatibility-result"></div>
+    </div>
+
+    <!-- Panel de Test de Permisos -->
+    <div class="container">
+        <h2>🛡️ Test Sistema de Permisos</h2>
+        <button onclick="testCondominiosPermissions()">Test Condominios</button>
+        <button onclick="testCreateCondominio()">Test Crear Condominio</button>
+        <div id="permissions-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = '../apis/auth.php';
+        
+        // Función utilitaria para hacer peticiones
+        async function apiRequest(action, data = null, method = 'GET') {
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                let url = `${API_BASE}?action=${action}`;
+                
+                if (method === 'POST' && data) {
+                    options.body = JSON.stringify(data);
+                } else if (method === 'GET' && data) {
+                    const params = new URLSearchParams(data);
+                    url += '&' + params.toString();
+                }
+                
+                const response = await fetch(url, options);
+                const result = await response.json();
+                
+                return { ok: response.ok, data: result, status: response.status };
+            } catch (error) {
+                return { ok: false, data: { success: false, error: error.message }, status: 500 };
+            }
+        }
+        
+        // Test login administrador
+        async function testAdminLogin() {
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (!email || !password) {
+                showResult('admin-result', 'error', 'Error', { error: 'Email y contraseña son requeridos' });
+                return;
+            }
+            
+            const result = await apiRequest('login_admin', { email, password }, 'POST');
+            
+            if (result.ok && result.data.success) {
+                // Simular el comportamiento del sistema existente
+                const userData = result.data.data.user;
+                const condominios = result.data.data.condominios;
+                
+                // Guardar en sessionStorage como lo hace el sistema actual
+                sessionStorage.setItem('user', JSON.stringify(userData));
+                sessionStorage.setItem('condominios', JSON.stringify(condominios));
+                
+                showResult('admin-result', 'success', 'Login Admin Exitoso', {
+                    message: result.data.message,
+                    user_stored: userData,
+                    condominios_count: condominios.length,
+                    session_storage: 'Datos guardados en sessionStorage'
+                });
+            } else {
+                showResult('admin-result', 'error', `Error Login Admin (${result.status})`, result.data);
+            }
+        }
+        
+        // Test login residente
+        async function testResidentLogin() {
+            const email = document.getElementById('resident-email').value;
+            const password = document.getElementById('resident-password').value;
+            
+            if (!email || !password) {
+                showResult('resident-result', 'error', 'Error', { error: 'Email y contraseña son requeridos' });
+                return;
+            }
+            
+            const result = await apiRequest('login_resident', { email, password }, 'POST');
+            
+            if (result.ok && result.data.success) {
+                // Simular el comportamiento del sistema existente para residentes
+                const userData = result.data.user;
+                const casa = result.data.casa;
+                
+                sessionStorage.setItem('user', JSON.stringify(userData));
+                sessionStorage.setItem('casa', JSON.stringify(casa));
+                
+                showResult('resident-result', 'success', 'Login Residente Exitoso', {
+                    message: result.data.message,
+                    user_stored: userData,
+                    casa: casa,
+                    is_admin: result.data.is_admin
+                });
+            } else {
+                showResult('resident-result', 'error', `Error Login Residente (${result.status})`, result.data);
+            }
+        }
+        
+        // Check session
+        async function checkSession() {
+            const result = await apiRequest('check_session');
+            
+            if (result.ok && result.data.success) {
+                showResult('admin-result', 'success', 'Sesión Activa', result.data);
+            } else {
+                showResult('admin-result', 'error', `Sin Sesión (${result.status})`, result.data);
+            }
+        }
+        
+        // Logout
+        async function logout() {
+            const result = await apiRequest('logout');
+            sessionStorage.clear();
+            showResult('admin-result', 'success', 'Logout', result.data);
+            showResult('compatibility-result', 'info', 'Storage Limpiado', { sessionStorage: 'Vacío' });
+        }
+        
+        // Verificar sessionStorage
+        function checkSessionStorage() {
+            const user = sessionStorage.getItem('user');
+            const condominios = sessionStorage.getItem('condominios');
+            const casa = sessionStorage.getItem('casa');
+            
+            const storageData = {
+                user: user ? JSON.parse(user) : null,
+                condominios: condominios ? JSON.parse(condominios) : null,
+                casa: casa ? JSON.parse(casa) : null,
+                user_raw: user,
+                condominios_raw: condominios,
+                casa_raw: casa
+            };
+            
+            const hasValidUser = user && user !== 'undefined' && user !== 'null';
+            
+            showResult('compatibility-result', hasValidUser ? 'success' : 'error', 
+                'Estado sessionStorage', storageData);
+        }
+        
+        // Test sistema CyberholeSystem
+        function testCyberholeSystem() {
+            const user = sessionStorage.getItem('user');
+            
+            try {
+                const userData = JSON.parse(user || '{}');
+                const isValid = userData && userData.nombres;
+                
+                showResult('compatibility-result', isValid ? 'success' : 'error', 
+                    'Test CyberholeSystem', {
+                        user_valid: isValid,
+                        user_data: userData,
+                        nombres: userData.nombres || 'No encontrado',
+                        apellido1: userData.apellido1 || 'No encontrado',
+                        error_simulado: !isValid ? 'SyntaxError: "undefined" is not valid JSON' : null
+                    });
+            } catch (error) {
+                showResult('compatibility-result', 'error', 'Error CyberholeSystem', {
+                    error: error.message,
+                    user_storage: user
+                });
+            }
+        }
+        
+        // Limpiar storage
+        function clearStorage() {
+            sessionStorage.clear();
+            showResult('compatibility-result', 'info', 'Storage Limpiado', { 
+                message: 'sessionStorage vacío' 
+            });
+        }
+        
+        // Test permisos condominios
+        async function testCondominiosPermissions() {
+            const result = await apiRequest('get_condominios');
+            showResult('permissions-result', result.ok ? 'success' : 'error', 
+                'Test Condominios con Permisos', result.data);
+        }
+        
+        // Test crear condominio
+        async function testCreateCondominio() {
+            const testData = {
+                nombre: 'Test Condominio ' + Date.now(),
+                direccion: 'Dirección Test 123'
+            };
+            
+            const result = await apiRequest('create_condominio', testData, 'POST');
+            showResult('permissions-result', result.ok ? 'success' : 'error', 
+                'Test Crear Condominio', result.data);
+        }
+        
+        // Función utilitaria para mostrar resultados
+        function showResult(elementId, type, title, data) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `
+                <div class="${type}">
+                    <strong>${title}</strong>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSessionStorage();
+        });
+    </script>
+</body>
+</html>

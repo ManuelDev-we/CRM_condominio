@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Diagnóstico y Reparación - Error sessionStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        button.danger:hover {
+            background: #c82333;
+        }
+        button.success {
+            background: #28a745;
+        }
+        button.success:hover {
+            background: #218838;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-ok { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Diagnóstico y Reparación - Error sessionStorage</h1>
+        <div class="info">
+            <strong>Objetivo:</strong> Diagnosticar y resolver el error "undefined" is not valid JSON en cyberhole-system.js
+        </div>
+    </div>
+
+    <!-- Panel de Diagnóstico -->
+    <div class="container">
+        <h2>🔍 Diagnóstico del sessionStorage</h2>
+        <button onclick="runDiagnostic()">Ejecutar Diagnóstico</button>
+        <button onclick="showRawStorage()">Ver sessionStorage Raw</button>
+        <button onclick="StorageUtils.debugInfo()">Debug StorageUtils</button>
+        <button class="danger" onclick="clearAllStorage()">Limpiar Todo</button>
+        <div id="diagnostic-result"></div>
+    </div>
+
+    <div class="grid">
+        <!-- Panel de Test Login Admin -->
+        <div class="container">
+            <h2>👨‍💼 Test Login Administrador</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="admin-email" placeholder="Email del administrador" value="admin@test.com">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="admin-password" placeholder="Contraseña" value="123456">
+            </div>
+            <button onclick="testAdminLogin()">Login Admin</button>
+            <button onclick="simulateOldLogin()">Simular Login Antiguo</button>
+            <div id="admin-result"></div>
+        </div>
+
+        <!-- Panel de Test Login Residente -->
+        <div class="container">
+            <h2>👥 Test Login Residente</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="resident-email" placeholder="Email del residente">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="resident-password" placeholder="Contraseña">
+            </div>
+            <button onclick="testResidentLogin()">Login Residente</button>
+            <div id="resident-result"></div>
+        </div>
+    </div>
+
+    <!-- Panel de Simulación del Error -->
+    <div class="container">
+        <h2>⚠️ Simulación del Error Original</h2>
+        <button onclick="simulateError()">Simular Error "undefined"</button>
+        <button onclick="testCyberholeSystemOld()">Test Código Original</button>
+        <button onclick="testCyberholeSystemNew()">Test Código Corregido</button>
+        <div id="error-simulation"></div>
+    </div>
+
+    <!-- Panel de Test API -->
+    <div class="container">
+        <h2>🔌 Test Endpoints API</h2>
+        <div class="grid-3">
+            <button onclick="testCheckSession()">Check Session</button>
+            <button onclick="testGetCondominios()">Get Condominios</button>
+            <button onclick="testCreateCondominio()">Create Condominio</button>
+        </div>
+        <div id="api-result"></div>
+    </div>
+
+    <!-- Panel de Reparación -->
+    <div class="container">
+        <h2>🛠️ Herramientas de Reparación</h2>
+        <button class="success" onclick="repairSessionStorage()">Reparar sessionStorage</button>
+        <button onclick="createValidSession()">Crear Sesión Válida</button>
+        <button onclick="validateAllData()">Validar Todos los Datos</button>
+        <div id="repair-result"></div>
+    </div>
+
+    <script src="storage-utils.js"></script>
+    <script>
+        const API_BASE = '../apis/auth.php';
+        
+        // Función utilitaria para hacer peticiones
+        async function apiRequest(action, data = null, method = 'GET') {
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                let url = `${API_BASE}?action=${action}`;
+                
+                if (method === 'POST' && data) {
+                    options.body = JSON.stringify(data);
+                } else if (method === 'GET' && data) {
+                    const params = new URLSearchParams(data);
+                    url += '&' + params.toString();
+                }
+                
+                const response = await fetch(url, options);
+                const result = await response.json();
+                
+                return { ok: response.ok, data: result, status: response.status };
+            } catch (error) {
+                return { ok: false, data: { success: false, error: error.message }, status: 500 };
+            }
+        }
+        
+        // Ejecutar diagnóstico completo
+        function runDiagnostic() {
+            const diagnostic = {
+                timestamp: new Date().toISOString(),
+                sessionStorage_length: sessionStorage.length,
+                items: {},
+                problems: [],
+                recommendations: []
+            };
+            
+            // Revisar cada item en sessionStorage
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                const value = sessionStorage.getItem(key);
+                
+                diagnostic.items[key] = {
+                    raw_value: value,
+                    type: typeof value,
+                    length: value ? value.length : 0,
+                    is_valid_json: false,
+                    parsed_value: null
+                };
+                
+                // Intentar parsear
+                try {
+                    if (value && value !== 'undefined' && value !== 'null') {
+                        diagnostic.items[key].parsed_value = JSON.parse(value);
+                        diagnostic.items[key].is_valid_json = true;
+                    } else {
+                        diagnostic.problems.push(`${key}: Contiene valor inválido '${value}'`);
+                    }
+                } catch (error) {
+                    diagnostic.problems.push(`${key}: Error JSON - ${error.message}`);
+                }
+            }
+            
+            // Generar recomendaciones
+            if (diagnostic.problems.length > 0) {
+                diagnostic.recommendations.push("Limpiar valores inválidos del sessionStorage");
+                diagnostic.recommendations.push("Usar StorageUtils para acceso seguro");
+            }
+            
+            const hasUser = StorageUtils.hasValidData('user');
+            const hasValidSession = StorageUtils.hasValidSession();
+            
+            if (!hasUser) {
+                diagnostic.problems.push("No hay datos válidos de usuario");
+                diagnostic.recommendations.push("Hacer login para establecer sesión válida");
+            }
+            
+            diagnostic.summary = {
+                has_valid_user: hasUser,
+                has_valid_session: hasValidSession,
+                user_type: StorageUtils.getUserType(),
+                total_problems: diagnostic.problems.length
+            };
+            
+            showResult('diagnostic-result', 
+                diagnostic.problems.length === 0 ? 'success' : 'warning',
+                'Diagnóstico Completo', 
+                diagnostic
+            );
+        }
+        
+        // Mostrar sessionStorage raw
+        function showRawStorage() {
+            const raw = {};
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                raw[key] = sessionStorage.getItem(key);
+            }
+            
+            showResult('diagnostic-result', 'info', 'sessionStorage Raw', raw);
+        }
+        
+        // Limpiar todo el storage
+        function clearAllStorage() {
+            StorageUtils.clear();
+            showResult('diagnostic-result', 'success', 'Storage Limpiado', 
+                { message: 'Todo el sessionStorage ha sido limpiado' });
+        }
+        
+        // Test login administrador
+        async function testAdminLogin() {
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (!email || !password) {
+                showResult('admin-result', 'error', 'Error', { error: 'Email y contraseña son requeridos' });
+                return;
+            }
+            
+            const result = await apiRequest('login_admin', { email, password }, 'POST');
+            
+            if (result.ok && result.data.success) {
+                // Usar StorageUtils para guardar de forma segura
+                const userData = result.data.data.user;
+                const condominios = result.data.data.condominios;
+                
+                StorageUtils.setItem('user', userData);
+                StorageUtils.setItem('condominios', condominios);
+                
+                showResult('admin-result', 'success', 'Login Admin Exitoso', {
+                    message: result.data.message,
+                    user_stored: userData,
+                    condominios_count: condominios.length,
+                    storage_method: 'StorageUtils'
+                });
+            } else {
+                showResult('admin-result', 'error', `Error Login Admin (${result.status})`, result.data);
+            }
+        }
+        
+        // Simular login con método antiguo (problemático)
+        function simulateOldLogin() {
+            // Simular respuesta del servidor
+            const mockResponse = {
+                success: true,
+                data: {
+                    user: {
+                        id_admin: 1,
+                        nombres: 'Admin',
+                        apellido1: 'Test',
+                        correo: 'admin@test.com'
+                    },
+                    condominios: []
+                }
+            };
+            
+            // Método problemático: guardar directamente
+            sessionStorage.setItem('user', JSON.stringify(mockResponse.data.user));
+            sessionStorage.setItem('condominios', JSON.stringify(mockResponse.data.condominios));
+            
+            showResult('admin-result', 'success', 'Login Simulado (Método Antiguo)', {
+                message: 'Datos guardados con método tradicional',
+                method: 'sessionStorage.setItem directo'
+            });
+        }
+        
+        // Test login residente
+        async function testResidentLogin() {
+            const email = document.getElementById('resident-email').value;
+            const password = document.getElementById('resident-password').value;
+            
+            if (!email || !password) {
+                showResult('resident-result', 'error', 'Error', { error: 'Email y contraseña son requeridos' });
+                return;
+            }
+            
+            const result = await apiRequest('login_resident', { email, password }, 'POST');
+            
+            if (result.ok && result.data.success) {
+                const userData = result.data.data.user;
+                const casa = result.data.data.casa;
+                
+                StorageUtils.setItem('user', userData);
+                StorageUtils.setItem('casa', casa);
+                
+                showResult('resident-result', 'success', 'Login Residente Exitoso', {
+                    message: result.data.message,
+                    user_stored: userData,
+                    casa: casa
+                });
+            } else {
+                showResult('resident-result', 'error', `Error Login Residente (${result.status})`, result.data);
+            }
+        }
+        
+        // Simular el error original
+        function simulateError() {
+            // Crear el escenario problemático
+            sessionStorage.setItem('user', 'undefined');
+            
+            try {
+                // Código original problemático
+                const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+                showResult('error-simulation', 'error', 'No debería llegar aquí', user);
+            } catch (error) {
+                showResult('error-simulation', 'error', 'Error Simulado Correctamente', {
+                    error: error.message,
+                    scenario: 'sessionStorage contenía "undefined" como string',
+                    original_code: 'JSON.parse(sessionStorage.getItem("user") || "{}")'
+                });
+            }
+        }
+        
+        // Test código original de cyberhole-system
+        function testCyberholeSystemOld() {
+            try {
+                // Código original problemático
+                const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+                showResult('error-simulation', 'success', 'Código Original Funcionó', {
+                    user: user,
+                    message: 'No hay datos problemáticos actualmente'
+                });
+            } catch (error) {
+                showResult('error-simulation', 'error', 'Código Original Falló', {
+                    error: error.message,
+                    solution: 'Usar código corregido'
+                });
+            }
+        }
+        
+        // Test código corregido
+        function testCyberholeSystemNew() {
+            try {
+                // Código corregido
+                const userStorage = sessionStorage.getItem('user');
+                const user = (userStorage && userStorage !== 'undefined' && userStorage !== 'null') 
+                    ? JSON.parse(userStorage) 
+                    : {};
+                
+                showResult('error-simulation', 'success', 'Código Corregido Funcionó', {
+                    user: user,
+                    method: 'Verificación previa antes de JSON.parse'
+                });
+            } catch (error) {
+                showResult('error-simulation', 'error', 'Error Inesperado', {
+                    error: error.message
+                });
+            }
+        }
+        
+        // Test endpoints API
+        async function testCheckSession() {
+            const result = await apiRequest('check_session');
+            showResult('api-result', result.ok ? 'success' : 'warning', 'Check Session', result.data);
+        }
+        
+        async function testGetCondominios() {
+            const result = await apiRequest('get_condominios');
+            showResult('api-result', result.ok ? 'success' : 'error', 'Get Condominios', result.data);
+        }
+        
+        async function testCreateCondominio() {
+            const testData = {
+                nombre: 'Test Diagnóstico ' + Date.now(),
+                direccion: 'Dirección Test 123'
+            };
+            
+            const result = await apiRequest('create_condominio', testData, 'POST');
+            showResult('api-result', result.ok ? 'success' : 'error', 'Create Condominio', result.data);
+        }
+        
+        // Reparar sessionStorage
+        function repairSessionStorage() {
+            const repaired = [];
+            const removed = [];
+            
+            // Lista de claves conocidas que deberían existir
+            const knownKeys = ['user', 'condominios', 'casa'];
+            
+            knownKeys.forEach(key => {
+                const value = sessionStorage.getItem(key);
+                
+                if (value === 'undefined' || value === 'null' || value === '') {
+                    sessionStorage.removeItem(key);
+                    removed.push(key);
+                } else if (value) {
+                    try {
+                        JSON.parse(value);
+                        repaired.push(key + ': OK');
+                    } catch (error) {
+                        sessionStorage.removeItem(key);
+                        removed.push(key + ': JSON inválido');
+                    }
+                }
+            });
+            
+            showResult('repair-result', 'success', 'Reparación Completada', {
+                repaired: repaired,
+                removed: removed,
+                next_step: 'Hacer login para establecer datos válidos'
+            });
+        }
+        
+        // Crear sesión válida para pruebas
+        function createValidSession() {
+            const mockUser = {
+                id_admin: 999,
+                nombres: 'Usuario',
+                apellido1: 'Prueba',
+                correo: 'test@example.com'
+            };
+            
+            const mockCondominios = [
+                {
+                    id_condominio: 1,
+                    nombre: 'Condominio Prueba',
+                    direccion: 'Dirección Prueba'
+                }
+            ];
+            
+            StorageUtils.setItem('user', mockUser);
+            StorageUtils.setItem('condominios', mockCondominios);
+            
+            showResult('repair-result', 'success', 'Sesión Válida Creada', {
+                user: mockUser,
+                condominios: mockCondominios,
+                message: 'Datos de prueba establecidos correctamente'
+            });
+        }
+        
+        // Validar todos los datos
+        function validateAllData() {
+            const validation = {
+                user: StorageUtils.getCurrentUser(),
+                condominios: StorageUtils.getCurrentCondominios(),
+                casa: StorageUtils.getCurrentCasa(),
+                hasValidSession: StorageUtils.hasValidSession(),
+                userType: StorageUtils.getUserType(),
+                validData: StorageUtils.hasValidData('user')
+            };
+            
+            showResult('repair-result', 
+                validation.hasValidSession ? 'success' : 'warning',
+                'Validación de Datos', 
+                validation
+            );
+        }
+        
+        // Función utilitaria para mostrar resultados
+        function showResult(elementId, type, title, data) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `
+                <div class="${type}">
+                    <strong>${title}</strong>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            runDiagnostic();
+        });
+    </script>
+</body>
+</html>

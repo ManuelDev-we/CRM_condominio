@@ -1,0 +1,147 @@
+<!-- templates.html/resi_template/profile.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil & Activos - Cyberhole Condominios CRM</title>
+  <link rel="stylesheet" href="../../style_html/entrance.css">
+  <script src="../../js/cyberhole-system.js"></script>
+  <style>
+    /* Menú horizontal */
+    .profile-menu {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .profile-menu button {
+      background: var(--btn-grad);
+      border: none;
+      padding: 0.7rem 1.3rem;
+      border-radius: 2rem;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+    .profile-menu button:hover {background: var(--btn-hover);transform: translateY(-2px);}    
+    .hidden {display: none;}
+    .profile-section h2 {margin-bottom: 1rem;}
+    summary {list-style:none;}
+  </style>
+</head>
+<body>
+  <?php include '../shared_header_resi.html'; ?>
+
+  <main class="entrance-main container">
+    <div id="notification" class="notification" style="display: none;"></div>
+    
+    <!-- ===== Menú de acciones ===== -->
+    <nav class="profile-menu">
+      <button data-target="engomadoForm">Registrar Engomado</button>
+      <button data-target="tagForm">Registrar Tag</button>
+      <button data-target="engomadoAdmin">Gestionar Engomados</button>
+      <button data-target="tagAdmin">Gestionar Tags</button>
+    </nav>
+
+    <!-- ============== FORMULARIO ENGOMADO ============== -->
+    <section id="engomadoForm" class="profile-section entrance-section">
+      <h2>Registrar Engomado (Vehículo)</h2>
+      <form action="../../php/resi/create_engomado.php" method="POST" enctype="multipart/form-data" class="form-container">
+        <div class="form-group"><label for="placa">Placa</label><input type="text" id="placa" name="placa" required></div>
+        <div class="form-group"><label for="modelo">Modelo</label><input type="text" id="modelo" name="modelo" required></div>
+        <div class="form-group"><label for="color">Color</label><input type="text" id="color" name="color" required></div>
+        <div class="form-group"><label for="anio">Año</label><input type="number" id="anio" name="ano" min="1900" max="2100" required></div>
+        <div class="form-group"><label for="foto">Foto (opcional)</label><input type="file" id="foto" name="foto" accept="image/*"></div>
+        <input type="hidden" name="id_condominio" value="<?= $condominioId ?>">
+        <input type="hidden" name="id_casa" value="<?= $casaId ?>">
+        <input type="hidden" name="id_calle" value="<?= $calleId ?>">
+        <input type="hidden" name="id_persona" value="<?= $personaId ?>">
+        <button type="submit" class="assign-btn">Guardar Engomado</button>
+      </form>
+    </section>
+
+    <!-- ============== FORMULARIO TAG ============== -->
+    <section id="tagForm" class="profile-section entrance-section hidden">
+      <h2>Registrar Tag (Sticker / RFID)</h2>
+      <form action="../../php/resi/create_tag.php" method="POST" class="form-container">
+        <div class="form-group" style="grid-column: span 2;"><label for="tag_code">Código del Tag</label><input type="text" id="tag_code" name="tag" required></div>
+        <input type="hidden" name="id_condominio" value="<?= $condominioId ?>">
+        <input type="hidden" name="id_casa" value="<?= $casaId ?>">
+        <input type="hidden" name="id_calle" value="<?= $calleId ?>">
+        <input type="hidden" name="id_persona" value="<?= $personaId ?>">
+        <button type="submit" class="assign-btn">Guardar Tag</button>
+      </form>
+    </section>
+
+    <!-- ============== ADMINISTRAR ENGOMADOS ============== -->
+    <section id="engomadoAdmin" class="profile-section entrance-section hidden">
+      <h2>Mis Engomados</h2>
+      <form method="GET" class="filter-container">
+        <div class="form-group"><label for="f_placa">Placa</label><input type="text" id="f_placa" name="placa"></div>
+        <div class="form-group"><label for="f_color">Color</label><input type="text" id="f_color" name="color"></div>
+        <button type="submit" class="btn">Filtrar</button>
+      </form>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Placa</th><th>Modelo</th><th>Color</th><th>Año</th><th>Calle</th><th>Casa</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <?php foreach ($engomados as $g): ?>
+            <tr>
+              <td><?= htmlspecialchars($g['placa']) ?></td>
+              <td><?= htmlspecialchars($g['modelo']) ?></td>
+              <td><?= htmlspecialchars($g['color']) ?></td>
+              <td><?= htmlspecialchars($g['ano']) ?></td>
+              <td><?= htmlspecialchars($g['calle']) ?></td>
+              <td><?= htmlspecialchars($g['casa']) ?></td>
+              <td><a href="edit_engomado.php?id=<?= $g['id_engomado'] ?>">Editar</a> | <a href="delete_engomado.php?id=<?= $g['id_engomado'] ?>" onclick="return confirm('¿Eliminar engomado?');">Eliminar</a></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============== ADMINISTRAR TAGS ============== -->
+    <section id="tagAdmin" class="profile-section entrance-section hidden">
+      <h2>Mis Tags</h2>
+      <form method="GET" class="filter-container">
+        <div class="form-group"><label for="f_tag">Código Tag</label><input type="text" id="f_tag" name="tag"></div>
+        <button type="submit" class="btn">Filtrar</button>
+      </form>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Código Tag</th><th>Calle</th><th>Casa</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <?php foreach ($tags as $t): ?>
+            <tr>
+              <td><?= htmlspecialchars($t['tag']) ?></td>
+              <td><?= htmlspecialchars($t['calle']) ?></td>
+              <td><?= htmlspecialchars($t['casa']) ?></td>
+              <td><a href="edit_tag.php?id=<?= $t['id_persona'] ?>">Editar</a> | <a href="delete_tag.php?id=<?= $t['id_persona'] ?>" onclick="return confirm('¿Eliminar tag?');">Eliminar</a></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer><p>&copy; 2025 Cyberhole Condominios CRM</p></footer>
+
+  <script>
+    // Toggle sections via menu
+    document.querySelectorAll('.profile-menu button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        document.querySelectorAll('.profile-section').forEach(sec => sec.classList.add('hidden'));
+        document.getElementById(target).classList.remove('hidden');
+        // scroll to top of section
+        document.getElementById(target).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+</body>
+</html>

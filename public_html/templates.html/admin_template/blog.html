@@ -5,30 +5,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tareas de Empleados - Cyberhole Condominios CRM</title>
-
   <link rel="stylesheet" href="../../style_html/admin_template.css">
+  <script src="../../js/cyberhole-system.js"></script>
 </head>
 <body>
   <!-- Header compartido -->
-  <?php include '../shared_header_admin.html'; ?>
+  <div data-include="admin-header"></div>
 
   <main class="admin-main container">
+    <div id="notification" class="notification" style="display: none;"></div>
+    
     <!-- Sección desplegable para asignar tarea -->
     <section class="admin-section">
       <details open>
         <summary class="assign-summary">Asignar Nueva Tarea</summary>
-        <form action="../../php/admin/assign_tarea.php" method="POST" enctype="multipart/form-data" class="form-container">
+        <form id="assignTaskForm" enctype="multipart/form-data" class="form-container">
           <div class="form-group">
             <label for="asig_condominio">Condominio</label>
-            <select id="asig_condominio" name="id_condominio" required></select>
+            <select id="asig_condominio" name="id_condominio" required>
+              <option value="">Seleccionar Condominio...</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="asig_calle">Calle</label>
-            <select id="asig_calle" name="id_calle" required></select>
+            <select id="asig_calle" name="id_calle" required>
+              <option value="">Seleccionar Calle...</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="asig_trabajador">Empleado</label>
-            <select id="asig_trabajador" name="id_trabajador" required></select>
+            <select id="asig_trabajador" name="id_trabajador" required>
+              <option value="">Seleccionar Empleado...</option>
+            </select>
           </div>
           <div class="form-group" style="grid-column: span 2;">
             <label for="asig_desc">Descripción</label>
@@ -46,20 +54,24 @@
     <section class="admin-section">
       <h2>Tareas de Empleados</h2>
       <!-- Filtros -->
-      <form method="GET" class="filter-container">
+      <form id="filterForm" class="filter-container">
         <div class="form-group">
           <label for="filter_condominio">Condominio</label>
-          <select id="filter_condominio" name="condominio"><option value="">Todos</option></select>
+          <select id="filter_condominio" name="condominio">
+            <option value="">Todos</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="filter_empleado">Empleado</label>
-          <select id="filter_empleado" name="empleado"><option value="">Todos</option></select>
+          <select id="filter_empleado" name="empleado">
+            <option value="">Todos</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="filter_fecha">Fecha</label>
           <input type="date" id="filter_fecha" name="fecha">
         </div>
-        <button type="submit" class="btn">Aplicar Filtros</button>
+        <button type="button" id="applyFilters" class="btn">Aplicar Filtros</button>
       </form>
 
       <!-- Tabla de Tareas -->
@@ -72,23 +84,12 @@
               <th>Calle</th>
               <th>Descripción</th>
               <th>Fecha</th>
+              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
-          <tbody>
-            <?php foreach ($tareas as $tarea): ?>
-            <tr>
-              <td><?= htmlspecialchars($tarea['empleado']) ?></td>
-              <td><?= htmlspecialchars($tarea['condominio']) ?></td>
-              <td><?= htmlspecialchars($tarea['calle']) ?></td>
-              <td><?= htmlspecialchars($tarea['descripcion']) ?></td>
-              <td><?= htmlspecialchars($tarea['fecha']) ?></td>
-              <td>
-                <a href="edit_tarea.php?id=<?= $tarea['id_tarea'] ?>">Editar</a> |
-                <a href="delete_tarea.php?id=<?= $tarea['id_tarea'] ?>" onclick="return confirm('¿Eliminar tarea?');">Eliminar</a>
-              </td>
-            </tr>
-            <?php endforeach; ?>
+          <tbody id="tasksTableBody">
+            <!-- Las tareas se cargarán dinámicamente -->
           </tbody>
         </table>
       </div>
@@ -99,6 +100,47 @@
     <p>&copy; 2025 Cyberhole Condominios CRM</p>
   </footer>
 
+  <script>
+    // El sistema de carga de datos se maneja automáticamente con cyberhole-system.js
+    // Solo necesitamos manejar el formulario de asignación de tareas
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Formulario de asignación de tareas
+        const assignForm = document.getElementById('assignTaskForm');
+        if (assignForm) {
+            assignForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(assignForm);
+                formData.append('action', 'create');
+                
+                try {
+                    const response = await fetch('../../apis/tasks.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        cyberholeAuth.showMessage('Tarea asignada exitosamente', 'success');
+                        assignForm.reset();
+                        // Recargar opciones
+                        setTimeout(() => {
+                            cyberholeAuth.loadCondominiosForTask();
+                        }, 500);
+                    } else {
+                        cyberholeAuth.showMessage(data.message || 'Error al asignar tarea', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    cyberholeAuth.showMessage('Error de conexión', 'error');
+                }
+            });
+        }
+    });
+  </script>
+  
   <style>
     /* Summary style */
     .assign-summary {
@@ -106,6 +148,18 @@
       font-size: 1.25rem;
       color: var(--accent1);
       margin-bottom: 1rem;
+    }
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      margin: 0 0.125rem;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+    .btn-danger:hover {
+      background-color: #c82333;
     }
   </style>
 </body>

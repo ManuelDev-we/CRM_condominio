@@ -13,8 +13,28 @@
         <li><a href="../resi_template/entrance.html">Entradas</a></li>
         <li><a href="../resi_template/blog.html">Blog</a></li>
         <li><a href="../resi_template/acces.html">Accesos</a></li>
-        <li><a href="../../php/logout.php" class="logout">Cerrar Sesión</a></li>
+        <li><button type="button" class="logout-btn" onclick="handleLogout()">Cerrar Sesión</button></li>
       </ul>
     </nav>
   </div>
 </header>
+
+<script>
+async function handleLogout() {
+    try {
+        const response = await fetch('../../apis/auth.php?action=logout');
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Sesión cerrada exitosamente');
+            window.location.href = '../../index.html';
+        } else {
+            alert('Error al cerrar sesión');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // Forzar redirección en caso de error
+        window.location.href = '../../index.html';
+    }
+}
+</script>

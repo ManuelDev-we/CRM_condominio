@@ -7,6 +7,7 @@
   <title>Administración - Cyberhole Condominios CRM</title>
   <link rel="stylesheet" href="../../style_html/index.css">
   <link rel="stylesheet" href="../../style_html/admin_template.css">
+  <script src="../../js/cyberhole-system.js"></script>
   <style>
     /* Fondo azul marino */
     body {
@@ -39,13 +40,14 @@
   <canvas id="snow"></canvas>
 
   <!-- Header compartido -->
-  <?php include '../shared_header_admin.html'; ?>
+  <div data-include="admin-header"></div>
 
   <main class="admin-main container">
     <!-- Sección: Crear Condominio -->
     <section class="admin-section">
       <h2>Crear Condominio</h2>
-      <form action="../../php/admin/create_condominio.php" method="POST" class="form-container">
+      <div id="notification" class="notification" style="display: none;"></div>
+      <form id="createCondominioForm" class="form-container">
         <div class="form-group">
           <label for="cond_nombre">Nombre</label>
           <input type="text" id="cond_nombre" name="nombre" required>
@@ -57,29 +59,33 @@
         <button type="submit" class="btn">Crear Condominio</button>
       </form>
     </section>
-    <!-- Sección: Agregar Calle -->
+    <!-- Sección: Agregar Calles -->
     <section class="admin-section">
-      <h2>Agregar Calle</h2>
-      <form action="../../php/admin/create_calle.php" method="POST" class="form-container">
+      <h2>Agregar Calles</h2>
+      <div id="calleNotification" class="notification" style="display: none;"></div>
+      <form id="createCalleForm" class="form-container">
         <div class="form-group">
           <label for="calle_condominio">Condominio</label>
           <select id="calle_condominio" name="id_condominio" required></select>
         </div>
         <div class="form-group">
-          <label for="calle_nombre">Nombre de Calle</label>
-          <input type="text" id="calle_nombre" name="nombre" required>
+          <label for="calle_nombres">Nombres de Calles</label>
+          <textarea id="calle_nombres" name="nombres" required 
+                    placeholder="Ingresa los nombres de las calles separados por:&#10;- Punto y coma (;)&#10;- Coma (,)&#10;- Salto de línea&#10;&#10;Ejemplo:&#10;Calle Principal&#10;Avenida Central&#10;Calle Los Pinos"></textarea>
+          <small style="color: #666;">Puedes agregar múltiples calles a la vez separándolas con ; , o salto de línea</small>
         </div>
         <div class="form-group">
-          <label for="calle_desc">Descripción (opcional)</label>
-          <textarea id="calle_desc" name="descripcion"></textarea>
+          <label for="calle_desc">Descripción general (opcional)</label>
+          <textarea id="calle_desc" name="descripcion" placeholder="Descripción que se aplicará a todas las calles"></textarea>
         </div>
-        <button type="submit" class="btn">Agregar Calle</button>
+        <button type="submit" class="btn">Agregar Calles</button>
       </form>
     </section>
-    <!-- Sección: Agregar Casa -->
+    <!-- Sección: Agregar Casas -->
     <section class="admin-section">
-      <h2>Agregar Casa</h2>
-      <form action="../../php/admin/create_casa.php" method="POST" class="form-container">
+      <h2>Agregar Casas</h2>
+      <div id="casaNotification" class="notification" style="display: none;"></div>
+      <form id="createCasaForm" class="form-container">
         <div class="form-group">
           <label for="casa_condominio">Condominio</label>
           <select id="casa_condominio" name="id_condominio" required></select>
@@ -89,11 +95,29 @@
           <select id="casa_calle" name="id_calle" required></select>
         </div>
         <div class="form-group">
-          <label for="casa_numero">Número de Casa</label>
-          <input type="text" id="casa_numero" name="casa" required>
+          <label for="casa_numero_inicio">Número de Casa Inicial</label>
+          <input type="number" id="casa_numero_inicio" name="numero_inicio" required min="1" 
+                 placeholder="Ej: 1, 101, 201" value="1">
+          <small style="color: #666;">Número desde donde empezar la numeración</small>
         </div>
-        <button type="submit" class="btn">Agregar Casa</button>
+        <div class="form-group">
+          <label for="casa_cantidad">Cantidad de Casas</label>
+          <input type="number" id="casa_cantidad" name="cantidad" required min="1" max="500" 
+                 placeholder="Ej: 30, 50" value="1">
+          <small style="color: #666;">¿Cuántas casas crear? (máximo 500)</small>
+        </div>
+        <div class="form-group">
+          <label for="casa_prefijo">Prefijo (opcional)</label>
+          <input type="text" id="casa_prefijo" name="prefijo" maxlength="10" 
+                 placeholder="Ej: Casa, A-, B-">
+          <small style="color: #666;">Texto que aparecerá antes del número (ej: "Casa 1", "A-1")</small>
+        </div>
+        <button type="submit" class="btn">Generar Casas</button>
       </form>
+      <div id="casaPreview" style="display: none; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+        <h4>Vista Previa:</h4>
+        <div id="casaPreviewList"></div>
+      </div>
     </section>
   </main>
   <footer>

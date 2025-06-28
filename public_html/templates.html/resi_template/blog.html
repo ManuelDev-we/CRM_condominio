@@ -1,0 +1,73 @@
+<!-- templates.html/resi_template/tasks.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tareas del Residente - Cyberhole Condominios CRM</title>
+  <link rel="stylesheet" href="../../style_html/tasks_resi.css">
+</head>
+<body>
+  <?php include '../shared_header_resi.html'; ?>
+
+  <main class="task-main container">
+    <!-- Menú de acciones -->
+    <nav class="task-menu">
+      <button data-target="taskForm">Registrar Tarea</button>
+      <button data-target="taskAdmin">Mis Tareas</button>
+    </nav>
+
+    <!-- Formulario de Tarea -->
+    <section id="taskForm" class="task-section">
+      <h2>Registrar Nueva Tarea</h2>
+      <form action="../../php/resi/create_task.php" method="POST" enctype="multipart/form-data" class="form-container">
+        <div class="form-group full"><label for="task_desc">Descripción</label><textarea id="task_desc" name="descripcion" required></textarea></div>
+        <div class="form-group"><label for="task_img">Imagen (opcional)</label><input type="file" id="task_img" name="imagen" accept="image/*"></div>
+        <input type="hidden" name="id_condominio" value="<?= $condominioId ?>">
+        <input type="hidden" name="id_calle" value="<?= $calleId ?>">
+        <input type="hidden" name="id_casa" value="<?= $casaId ?>">
+        <input type="hidden" name="id_trabajador" value="0"><!-- 0 sin asignar -->
+        <button type="submit" class="assign-btn">Enviar Tarea</button>
+      </form>
+    </section>
+
+    <!-- Tabla de Tareas -->
+    <section id="taskAdmin" class="task-section hidden">
+      <h2>Mis Tareas Enviadas</h2>
+      <form method="GET" class="filter-container">
+        <div class="form-group"><label for="f_desc">Descripción</label><input type="text" id="f_desc" name="descripcion"></div>
+        <button type="submit" class="btn">Filtrar</button>
+      </form>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Descripción</th><th>Estado</th><th>Imagen</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <?php foreach ($tareas as $t): ?>
+            <tr>
+              <td><?= htmlspecialchars($t['descripcion']) ?></td>
+              <td><?= $t['estado'] ?? 'Pendiente' ?></td>
+              <td><?php if($t['imagen']): ?><a href="<?= $t['imagen'] ?>" target="_blank">Ver</a><?php endif; ?></td>
+              <td><a href="edit_task.php?id=<?= $t['id_tarea'] ?>">Editar</a> | <a href="delete_task.php?id=<?= $t['id_tarea'] ?>" onclick="return confirm('¿Eliminar tarea?');">Eliminar</a></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer><p>&copy; 2025 Cyberhole Condominios CRM</p></footer>
+
+  <script>
+    // Alternar secciones
+    document.querySelectorAll('.task-menu button').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const target=btn.dataset.target;
+        document.querySelectorAll('.task-section').forEach(sec=>sec.classList.add('hidden'));
+        document.getElementById(target).classList.remove('hidden');
+        document.getElementById(target).scrollIntoView({behavior:'smooth'});
+      });
+    });
+  </script>
+</body>
+</html>

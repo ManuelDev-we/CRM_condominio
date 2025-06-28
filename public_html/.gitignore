@@ -2,61 +2,41 @@
 .env
 config/database.php
 
-# Logs y archivos de debug
+# Logs
 logs/
 *.log
-debug.log
-error_log
-php_errors.log
 
-# Archivos temporales y cache
+# Archivos temporales
 tmp/
 temp/
-cache/
-*.cache
-sessions/
-
-# Uploads y archivos generados
-uploads/tmp/
-uploads/temp/
-*.uploaded
 
 # Archivos de sistema
 .DS_Store
 Thumbs.db
-desktop.ini
 
-# Archivos de editor e IDE
+# Archivos de editor
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 
-# Dependencias
+# Dependencias (si usas composer)
 vendor/
-node_modules/
 
-# Archivos de respaldo y versiones
+# Archivos de respaldo
 *.bak
 *.backup
-*.orig
-*.tmp
 
-# Archivos específicos de desarrollo
-test.php
-debug.php
-sandbox.php
+# Archivos de cache
+cache/
+*.cache
 
-# Archivos de base de datos locales
-*.sqlite
-*.db
+# Archivos de sesión
+sessions/
 
-# Archivos de compresión
-*.zip
-*.rar
-*.tar.gz
+# Uploads temporales
+uploads/tmp/
 
-# Archivos específicos del servidor
-.htpasswd
-robots.txt
+# Archivos de error específicos
+error_log
+php_errors.log

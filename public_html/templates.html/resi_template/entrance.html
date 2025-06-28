@@ -1,0 +1,114 @@
+<!-- templates.html/resi_template/access.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accesos QR - Cyberhole Condominios CRM</title>
+  <link rel="stylesheet" href="../../style_html/access_resi.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <?php include '../shared_header_resi.html'; ?>
+
+  <main class="access-main container">
+    <!-- Menú -->
+    <nav class="access-menu">
+      <button data-target="qrFormSection">Generar QR</button>
+      <button data-target="historySection">Mis Accesos</button>
+    </nav>
+
+    <!-- Generar QR -->
+    <section id="qrFormSection" class="access-section">
+      <h2>Generar Código QR de Acceso</h2>
+      <p class="desc">Introduce el nombre de tu visitante. El sistema registrará fecha y hora automáticamente.</p>
+      <form action="../../php/resi/create_entrance.php" method="POST" class="form-container" id="qrForm">
+        <div class="form-group full"><label for="visitante">Nombre del Visitante</label><input type="text" id="visitante" name="nombre_accesante" required></div>
+        <input type="hidden" name="id_condominio" value="<?= $condominioId ?>">
+        <input type="hidden" name="id_calle" value="<?= $calleId ?>">
+        <input type="hidden" name="id_casa"  value="<?= $casaId ?>">
+        <button type="submit" class="assign-btn">Generar QR</button>
+      </form>
+      <!-- QR visual -->
+      <div id="qrResult" class="qr-wrapper hidden">
+        <h3>Código generado</h3>
+        <div id="qrcode" class="qr-box"></div>
+        <p class="hint">Toma captura de pantalla o descarga el código.</p>
+        <button id="downloadQR" class="btn">Descargar</button>
+      </div>
+    </section>
+
+    <!-- Historial -->
+    <section id="historySection" class="access-section hidden">
+      <h2>Mis Accesos Otorgados</h2>
+      <form method="GET" class="filter-container">
+        <div class="form-group"><label for="f_visitante">Visitante</label><input type="text" id="f_visitante" name="visitante"></div>
+        <div class="form-group"><label for="f_fecha">Fecha</label><input type="date" id="f_fecha" name="fecha"></div>
+        <button type="submit" class="btn">Filtrar</button>
+      </form>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>QR</th><th>Visitante</th><th>Entrada</th><th>Salida</th><th>Estado</th></tr></thead>
+          <tbody>
+            <?php foreach ($entradas as $e): ?>
+            <tr>
+              <td><img src="<?= $e['qr_url'] ?>" alt="QR" height="42"></td>
+              <td><?= htmlspecialchars($e['nombre_accesante']) ?></td>
+              <td><?= htmlspecialchars($e['hora_entrada']) ?></td>
+              <td><?= htmlspecialchars($e['hora_salida'] ?? '-') ?></td>
+              <td><?= $e['utilizado'] ? 'Usado' : 'Pendiente' ?></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer><p>&copy; 2025 Cyberhole Condominios CRM</p></footer>
+
+  <script>
+    // Toggle sections
+    document.querySelectorAll('.access-menu button').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const target=btn.dataset.target;
+        document.querySelectorAll('.access-section').forEach(sec=>sec.classList.add('hidden'));
+        document.getElementById(target).classList.remove('hidden');
+        document.getElementById(target).scrollIntoView({behavior:'smooth'});
+      });
+    });
+
+    // Generar QR via fetch
+    const form=document.getElementById('qrForm');
+    const qrDiv=document.getElementById('qrcode');
+    const qrWrapper=document.getElementById('qrResult');
+    const downloadBtn=document.getElementById('downloadQR');
+    let currentDataUrl='';
+
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const data=new FormData(form);
+      const res=await fetch(form.action,{method:'POST',body:data});
+      const json=await res.json();
+      if(json.ok){
+        qrDiv.innerHTML='';
+        const qr=new QRCode(qrDiv,{text:json.qr_text,width:220,height:220});
+        // esperar a que canvas esté listo
+        setTimeout(()=>{
+          const canvas=qrDiv.querySelector('canvas');
+          currentDataUrl=canvas.toDataURL('image/png');
+          qrWrapper.classList.remove('hidden');
+        },300);
+      }else alert('No se pudo generar QR');
+    });
+
+    downloadBtn.addEventListener('click',()=>{
+      if(!currentDataUrl) return;
+      const link=document.createElement('a');
+      link.href=currentDataUrl;
+      link.download='acceso_qr.png';
+      link.click();
+    });
+  </script>
+</body>
+</html>

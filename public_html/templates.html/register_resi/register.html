@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro Residente - Cyberhole Condominios CRM</title>
   <link rel="stylesheet" href="../../style_html/register.css">
+  <script src="../../js/cyberhole-system.js"></script>
 </head>
 <body>
   <div class="form-card">
@@ -14,26 +15,53 @@
       <p class="descripcion">Únete a la comunidad de residentes de tu condominio para acceder a todas las funcionalidades del CRM.</p>
     </header>
     <main>
-      <form action="../../php/resi/register.php" method="POST" class="form-container">
+      <div id="notification" class="notification" style="display: none;"></div>
+      <form id="residentRegisterForm" class="form-container">
         <div class="form-group">
-          <label for="nombre">Nombre Completo</label>
-          <br>
-          <input type="text" id="nombre" name="nombre" required>
+          <label for="nombres">Nombres</label>
+          <input type="text" id="nombres" name="nombres" required>
         </div>
         <div class="form-group">
-          <label for="codigo">Código de Residencia</label>
-          <br>
-          <input type="text" id="codigo" name="codigo" required>
+          <label for="apellido1">Primer Apellido</label>
+          <input type="text" id="apellido1" name="apellido1" required>
         </div>
         <div class="form-group">
-          <label for="email">Correo Electrónico</label>
-          <br>
-          <input type="email" id="email" name="email" required>
+          <label for="apellido2">Segundo Apellido</label>
+          <input type="text" id="apellido2" name="apellido2" required>
         </div>
         <div class="form-group">
-          <label for="password">Contraseña</label>
-          <br>
-          <input type="password" id="password" name="password" required>
+          <label for="correo_electronico">Correo Electrónico</label>
+          <input type="email" id="correo_electronico" name="correo_electronico" required>
+        </div>
+        <div class="form-group">
+          <label for="curp">CURP</label>
+          <input type="text" id="curp" name="curp" required maxlength="18" minlength="18">
+        </div>
+        <div class="form-group">
+          <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+          <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+        </div>
+        <div class="form-group">
+          <label for="id_condominio">Condominio</label>
+          <select id="id_condominio" name="id_condominio" required>
+            <option value="">Selecciona un condominio</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="id_calle">Calle</label>
+          <select id="id_calle" name="id_calle" required>
+            <option value="">Selecciona una calle</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="id_casa">Casa</label>
+          <select id="id_casa" name="id_casa" required>
+            <option value="">Selecciona una casa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="contrasena">Contraseña</label>
+          <input type="password" id="contrasena" name="contrasena" required minlength="6">
         </div>
         <button type="submit" class="btn">Registrarme</button>
       </form>
@@ -43,5 +71,9 @@
       <a href="../../index.html" class="btn">Volver al inicio</a>
     </footer>
   </div>
+
+  <script>
+    // El sistema de autenticación y carga de datos se maneja automáticamente con cyberhole-system.js
+  </script>
 </body>
 </html>
