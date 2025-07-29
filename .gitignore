@@ -1,0 +1,42 @@
+# 🚨 ARCHIVOS SENSIBLES - NUNCA SUBIR A REPOSITORIO
+.env
+.env.local
+.env.production
+
+# Logs de aplicación
+logs/
+*.log
+error.log
+
+# Archivos de configuración con contraseñas
+config/database_prod.php
+config/secrets.php
+
+# Uploads de usuarios
+uploads/
+files/
+temp/
+
+# Cache y sesiones
+cache/
+sessions/
+tmp/
+
+# Backups de base de datos
+*.sql
+*.dump
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Dependencias (si se usan en el futuro)
+vendor/
+node_modules/
+
+# Archivos temporales de PHP
+*.tmp
+*.swp
+*.swo

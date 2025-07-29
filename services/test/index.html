@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 TEST INTERACTIVO CYBERHOLE - SERVICIOS ADMINISTRATIVOS</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            min-height: calc(100vh - 200px);
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px 20px;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .test-content {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #007bff;
+        }
+
+        .test-section.active {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .test-section.completed {
+            border-left-color: #17a2b8;
+            background: #d1ecf1;
+        }
+
+        .test-section.failed {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .step-item:hover {
+            background: rgba(0,123,255,0.1);
+            border-radius: 5px;
+            padding-left: 10px;
+        }
+
+        .step-item.completed {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .step-item.active {
+            color: #007bff;
+            font-weight: bold;
+            background: rgba(0,123,255,0.1);
+            border-radius: 5px;
+            padding-left: 10px;
+        }
+
+        .step-item.failed {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .btn.btn-success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+
+        .btn.btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .btn.btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .test-controls {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .progress-container {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .results-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+        }
+
+        .log-container {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px 0;
+        }
+
+        .log-entry.success {
+            color: #2ecc71;
+        }
+
+        .log-entry.error {
+            color: #e74c3c;
+        }
+
+        .log-entry.info {
+            color: #3498db;
+        }
+
+        .log-entry.warning {
+            color: #f39c12;
+        }
+
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            border: 2px solid transparent;
+        }
+
+        .status-indicator.pending {
+            background: #6c757d;
+        }
+
+        .status-indicator.running {
+            background: #007bff;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-indicator.success {
+            background: #28a745;
+        }
+
+        .status-indicator.failed {
+            background: #dc3545;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .data-display {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .data-display h4 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid;
+        }
+
+        .alert.alert-success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .alert.alert-danger {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .alert.alert-info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .alert.alert-warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .cycle-info {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 TEST INTERACTIVO CYBERHOLE</h1>
+            <p>Pruebas Completas de Servicios Administrativos - Lógica de Negocio</p>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <h3 style="color: #2c3e50; margin-bottom: 20px;">📋 Fases del Test</h3>
+                
+                <div class="test-section" id="section-setup">
+                    <div class="section-title">
+                        <span class="status-indicator pending" id="status-setup"></span>
+                        🔧 Configuración
+                    </div>
+                    <ul class="step-list">
+                        <li class="step-item" data-step="init">Inicializar Sistema</li>
+                        <li class="step-item" data-step="register-admin">Registrar Admin</li>
+                        <li class="step-item" data-step="login-admin">Login Admin</li>
+                    </ul>
+                </div>
+
+                <div class="test-section" id="section-condominios">
+                    <div class="section-title">
+                        <span class="status-indicator pending" id="status-condominios"></span>
+                        🏢 Condominios & Casas
+                    </div>
+                    <ul class="step-list">
+                        <li class="step-item" data-step="create-condominios">Crear 2 Condominios</li>
+                        <li class="step-item" data-step="create-casas">Registrar 2 Casas</li>
+                        <li class="step-item" data-step="generate-keys">Generar Claves Únicas</li>
+                    </ul>
+                </div>
+
+                <div class="test-section" id="section-empleados">
+                    <div class="section-title">
+                        <span class="status-indicator pending" id="status-empleados"></span>
+                        👥 Gestión Empleados
+                    </div>
+                    <ul class="step-list">
+                        <li class="step-item" data-step="create-empleados">Registrar 2 Empleados</li>
+                        <li class="step-item" data-step="delete-empleado">Eliminar 1 Empleado</li>
+                        <li class="step-item" data-step="assign-task">Asignar Tarea</li>
+                    </ul>
+                </div>
+
+                <div class="test-section" id="section-areas">
+                    <div class="section-title">
+                        <span class="status-indicator pending" id="status-areas"></span>
+                        🏊 Áreas Comunes
+                    </div>
+                    <ul class="step-list">
+                        <li class="step-item" data-step="create-areas">Crear 3 Áreas Comunes</li>
+                        <li class="step-item" data-step="make-reservations">Hacer 3 Reservas</li>
+                        <li class="step-item" data-step="search-people">Buscar Personas Asociadas</li>
+                    </ul>
+                </div>
+
+                <div class="test-section" id="section-access">
+                    <div class="section-title">
+                        <span class="status-indicator pending" id="status-access"></span>
+                        🔑 Control de Acceso
+                    </div>
+                    <ul class="step-list">
+                        <li class="step-item" data-step="search-tags">Buscar Tags</li>
+                        <li class="step-item" data-step="search-engomados">Buscar Engomados</li>
+                        <li class="step-item" data-step="associate-access">Asociar Personas</li>
+                    </ul>
+                </div>
+
+                <div class="test-section" id="section-management">
+                    <div class="section-title">
+                        <span class="status-indicator pending" id="status-management"></span>
+                        ⚙️ Gestión Avanzada
+                    </div>
+                    <ul class="step-list">
+                        <li class="step-item" data-step="delete-person">Eliminar Persona-Unidad</li>
+                        <li class="step-item" data-step="edit-data">Editar Datos</li>
+                        <li class="step-item" data-step="verify-relations">Verificar Relaciones</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="test-content">
+                <div class="cycle-info" id="cycle-info">
+                    🔄 CICLO 1 DE 2 - Preparando Primera Ejecución
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar">0%</div>
+                </div>
+
+                <div id="current-test-info" class="alert alert-info">
+                    <strong>🚀 Listo para comenzar</strong><br>
+                    Haz clic en "Iniciar Test Completo" para comenzar la primera ejecución del ciclo de pruebas.
+                </div>
+
+                <div class="log-container" id="log-container">
+                    <div class="log-entry info">[SISTEMA] Test Interactivo Cyberhole iniciado - <?php echo date('Y-m-d H:i:s'); ?></div>
+                    <div class="log-entry info">[SISTEMA] Esperando inicio de pruebas...</div>
+                </div>
+
+                <div class="results-container" id="results-container">
+                    <h3>📊 Resultados de la Ejecución</h3>
+                    <div id="results-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-controls">
+            <button class="btn btn-success" id="start-test" onclick="startFullTest()">
+                🚀 Iniciar Test Completo
+            </button>
+            <button class="btn btn-warning" id="step-test" onclick="startStepByStep()" disabled>
+                ⏯️ Modo Paso a Paso
+            </button>
+            <button class="btn btn-danger" id="reset-test" onclick="resetTest()" disabled>
+                🔄 Reiniciar Test
+            </button>
+            <button class="btn" id="download-report" onclick="downloadReport()" disabled>
+                📥 Descargar Reporte
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentCycle = 1;
+        let totalSteps = 18; // Total de pasos en el test
+        let currentStep = 0;
+        let testData = {
+            cycle1: {},
+            cycle2: {},
+            adminToken: null,
+            sessionId: null
+        };
+        let isRunning = false;
+        let stepMode = false;
+
+        // Inicializar el test
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔥 Test Interactivo Cyberhole Iniciado');
+            logMessage('Sistema inicializado correctamente', 'success');
+        });
+
+        // Función principal para iniciar el test completo
+        async function startFullTest() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            stepMode = false;
+            
+            document.getElementById('start-test').disabled = true;
+            document.getElementById('step-test').disabled = true;
+            document.getElementById('reset-test').disabled = false;
+            
+            logMessage('🚀 INICIANDO TEST COMPLETO - CICLO ' + currentCycle, 'info');
+            
+            try {
+                // Ejecutar todos los pasos secuencialmente
+                await runTestCycle();
+                
+                if (currentCycle === 1) {
+                    currentCycle = 2;
+                    document.getElementById('cycle-info').innerHTML = '🔄 CICLO 2 DE 2 - Segunda Ejecución';
+                    logMessage('🔄 Iniciando segundo ciclo de verificación...', 'info');
+                    await runTestCycle();
+                }
+                
+                logMessage('✅ TEST COMPLETO FINALIZADO - Ambos ciclos ejecutados', 'success');
+                showFinalResults();
+                
+            } catch (error) {
+                logMessage('❌ Error en test completo: ' + error.message, 'error');
+            } finally {
+                isRunning = false;
+                document.getElementById('start-test').disabled = false;
+                document.getElementById('step-test').disabled = false;
+                document.getElementById('download-report').disabled = false;
+            }
+        }
+
+        // Ejecutar un ciclo completo del test
+        async function runTestCycle() {
+            const steps = [
+                'init', 'register-admin', 'login-admin',
+                'create-condominios', 'create-casas', 'generate-keys',
+                'create-empleados', 'delete-empleado', 'assign-task',
+                'create-areas', 'make-reservations', 'search-people',
+                'search-tags', 'search-engomados', 'associate-access',
+                'delete-person', 'edit-data', 'verify-relations'
+            ];
+
+            for (let i = 0; i < steps.length; i++) {
+                currentStep = i + 1;
+                updateProgress();
+                await executeStep(steps[i]);
+                await sleep(500); // Pausa para visualización
+            }
+        }
+
+        // Ejecutar un paso específico
+        async function executeStep(stepName) {
+            logMessage(`🔄 Ejecutando paso: ${stepName} (Ciclo ${currentCycle})`, 'info');
+            updateStepStatus(stepName, 'running');
+
+            try {
+                const result = await callAPI('execute_step.php', {
+                    step: stepName,
+                    cycle: currentCycle,
+                    data: testData
+                });
+
+                if (result.success) {
+                    updateStepStatus(stepName, 'success');
+                    logMessage(`✅ ${stepName} completado exitosamente`, 'success');
+                    
+                    // Guardar datos del resultado
+                    if (result.data) {
+                        if (currentCycle === 1) {
+                            testData.cycle1[stepName] = result.data;
+                        } else {
+                            testData.cycle2[stepName] = result.data;
+                        }
+                    }
+                    
+                    // Mostrar información relevante
+                    if (result.info) {
+                        showStepInfo(result.info);
+                    }
+                } else {
+                    updateStepStatus(stepName, 'failed');
+                    logMessage(`❌ ${stepName} falló: ${result.error}`, 'error');
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                updateStepStatus(stepName, 'failed');
+                logMessage(`💥 Error en ${stepName}: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Llamada a la API
+        async function callAPI(endpoint, data) {
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // Actualizar estado visual de los pasos
+        function updateStepStatus(stepName, status) {
+            const stepElement = document.querySelector(`[data-step="${stepName}"]`);
+            if (stepElement) {
+                stepElement.className = `step-item ${status}`;
+            }
+            
+            // Actualizar indicador de sección
+            const section = getStepSection(stepName);
+            if (section) {
+                const indicator = document.getElementById(`status-${section}`);
+                if (indicator) {
+                    indicator.className = `status-indicator ${status}`;
+                }
+            }
+        }
+
+        // Obtener sección de un paso
+        function getStepSection(stepName) {
+            const sectionMap = {
+                'init': 'setup', 'register-admin': 'setup', 'login-admin': 'setup',
+                'create-condominios': 'condominios', 'create-casas': 'condominios', 'generate-keys': 'condominios',
+                'create-empleados': 'empleados', 'delete-empleado': 'empleados', 'assign-task': 'empleados',
+                'create-areas': 'areas', 'make-reservations': 'areas', 'search-people': 'areas',
+                'search-tags': 'access', 'search-engomados': 'access', 'associate-access': 'access',
+                'delete-person': 'management', 'edit-data': 'management', 'verify-relations': 'management'
+            };
+            return sectionMap[stepName];
+        }
+
+        // Actualizar barra de progreso
+        function updateProgress() {
+            const percentage = Math.round((currentStep / totalSteps) * 100);
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+        }
+
+        // Mostrar información del paso
+        function showStepInfo(info) {
+            const infoDiv = document.getElementById('current-test-info');
+            infoDiv.innerHTML = `<strong>📊 Información del paso:</strong><br>${info}`;
+        }
+
+        // Mostrar resultados finales
+        function showFinalResults() {
+            const resultsContainer = document.getElementById('results-container');
+            const resultsContent = document.getElementById('results-content');
+            
+            let html = '<h4>🎯 Resumen de Ejecución Completa</h4>';
+            html += `<div class="data-display">
+                <h4>Ciclo 1 - Primera Ejecución:</h4>
+                <pre>${JSON.stringify(testData.cycle1, null, 2)}</pre>
+            </div>`;
+            html += `<div class="data-display">
+                <h4>Ciclo 2 - Segunda Ejecución:</h4>
+                <pre>${JSON.stringify(testData.cycle2, null, 2)}</pre>
+            </div>`;
+            
+            resultsContent.innerHTML = html;
+            resultsContainer.classList.add('show');
+        }
+
+        // Funciones auxiliares
+        function logMessage(message, type = 'info') {
+            const logContainer = document.getElementById('log-container');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function resetTest() {
+            if (isRunning) return;
+            
+            currentCycle = 1;
+            currentStep = 0;
+            testData = { cycle1: {}, cycle2: {}, adminToken: null, sessionId: null };
+            
+            // Resetear UI
+            document.getElementById('cycle-info').innerHTML = '🔄 CICLO 1 DE 2 - Preparando Primera Ejecución';
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('progress-bar').textContent = '0%';
+            document.getElementById('current-test-info').innerHTML = '<strong>🚀 Listo para comenzar</strong><br>Haz clic en "Iniciar Test Completo" para comenzar la primera ejecución del ciclo de pruebas.';
+            document.getElementById('results-container').classList.remove('show');
+            
+            // Resetear estados de pasos
+            document.querySelectorAll('.step-item').forEach(item => {
+                item.className = 'step-item';
+            });
+            
+            document.querySelectorAll('.status-indicator').forEach(indicator => {
+                indicator.className = 'status-indicator pending';
+            });
+            
+            // Limpiar log
+            document.getElementById('log-container').innerHTML = `
+                <div class="log-entry info">[SISTEMA] Test reiniciado - ${new Date().toLocaleString()}</div>
+                <div class="log-entry info">[SISTEMA] Esperando inicio de pruebas...</div>
+            `;
+            
+            document.getElementById('start-test').disabled = false;
+            document.getElementById('step-test').disabled = false;
+            document.getElementById('reset-test').disabled = true;
+            document.getElementById('download-report').disabled = true;
+        }
+
+        // Modo paso a paso (placeholder)
+        function startStepByStep() {
+            alert('🔧 Función en desarrollo - Próximamente disponible');
+        }
+
+        // Descargar reporte (placeholder)
+        function downloadReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                cycles: 2,
+                data: testData
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cyberhole_test_report_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+    
+    <!-- Incluir JavaScript avanzado -->
+    <script src="advanced.js"></script>
+</body>
+</html>

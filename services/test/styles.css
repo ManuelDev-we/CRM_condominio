@@ -1,0 +1,315 @@
+/* ESTILOS ADICIONALES PARA EL TEST CYBERHOLE */
+
+/* Animaciones personalizadas */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 123, 255, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+}
+
+/* Aplicar animaciones */
+.test-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.step-item {
+    animation: slideInLeft 0.4s ease-out;
+}
+
+.step-item.active {
+    animation: glow 2s infinite;
+}
+
+/* Mejoras responsivas */
+@media (max-width: 1200px) {
+    .main-content {
+        grid-template-columns: 300px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+    
+    .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .header h1 {
+        font-size: 1.8em;
+    }
+    
+    .header p {
+        font-size: 1em;
+    }
+}
+
+/* Efectos de hover mejorados */
+.btn:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+    border-radius: 8px;
+}
+
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Estados de loading */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mejoras en la visualización de datos */
+.data-display {
+    position: relative;
+    overflow: hidden;
+}
+
+.data-display::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #007bff, #28a745);
+}
+
+/* Efectos de notificación */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease-out;
+    max-width: 300px;
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.notification.error {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.notification.info {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Mejoras en el log */
+.log-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.log-container::-webkit-scrollbar-track {
+    background: #34495e;
+}
+
+.log-container::-webkit-scrollbar-thumb {
+    background: #7f8c8d;
+    border-radius: 4px;
+}
+
+.log-container::-webkit-scrollbar-thumb:hover {
+    background: #95a5a6;
+}
+
+/* Indicadores de estado mejorados */
+.status-indicator.running::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    animation: ripple 1.5s infinite;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}
+
+/* Tooltips */
+.tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.tooltip::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover::before,
+.tooltip:hover::after {
+    opacity: 1;
+}
+
+/* Mejoras en las secciones */
+.test-section.running {
+    border-left-color: #007bff;
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.1), rgba(0, 123, 255, 0.05));
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% {
+        border-left-width: 5px;
+    }
+    50% {
+        border-left-width: 8px;
+    }
+    100% {
+        border-left-width: 5px;
+    }
+}
+
+/* Efectos de éxito */
+.success-animation {
+    animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+        background-color: inherit;
+    }
+    50% {
+        transform: scale(1.02);
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+    100% {
+        transform: scale(1);
+        background-color: inherit;
+    }
+}
+
+/* Dark mode toggle (futuro) */
+.dark-mode-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    font-size: 1.2em;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(0, 0, 0, 1);
+    transform: scale(1.1);
+}
